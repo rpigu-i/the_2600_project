@@ -33,3 +33,10 @@ Author: Irving Washington
 Files located in `a_simple_but_effective_spanner_in_your_avs` folder:
 
 * avs.pas
+
+## Uncapper's Paradise
+Author: CronoS@OlympoS
+
+Files located in `uncappers_paradise` folder:
+
+* script.vbs
