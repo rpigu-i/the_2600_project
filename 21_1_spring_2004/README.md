@@ -16,4 +16,12 @@ Files located in `exploiting_aim_screen_name_and_logger` folder:
 * imchaos.cgi
 
 
+## Using PERL to Defeat Provider Restrictions
+Author: TRM
+
+Files located in `using_perl_to_defeat_provider_restrictions` folder:
+
+* setip.pl
+* getip.pl
+* trmhtml.txt
 
