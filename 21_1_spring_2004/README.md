@@ -6,7 +6,7 @@ Code in this repository comes from the Spring 2004 edition of #2600.
 
 The code was available in the magazine, or via the website at https://www.2600.com/code/211/
 
-A back issue of the magazine can be purchased from the 2600 magazine website at https://store.2600.com/collections/2000-2009/products/spring-2003
+A back issue of the magazine can be purchased from the 2600 magazine website at https://store.2600.com/collections/2000-2009/products/spring-2004
 
 
 ## Exploiting AIM Screen Name Loggers
