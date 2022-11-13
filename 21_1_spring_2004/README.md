@@ -25,3 +25,11 @@ Files located in `using_perl_to_defeat_provider_restrictions` folder:
 * getip.pl
 * trmhtml.txt
 
+
+
+## A Simple But Effective Spanner in Your AVS
+Author: Irving Washington
+
+Files located in `a_simple_but_effective_spanner_in_your_avs` folder:
+
+* avs.pas
