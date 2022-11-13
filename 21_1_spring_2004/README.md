@@ -40,3 +40,11 @@ Author: CronoS@OlympoS
 Files located in `uncappers_paradise` folder:
 
 * script.vbs
+
+## Subverting Non-Secure Login Forms
+Author: I. O. Hook
+
+Files located in `subverting_non_secure_login_forms` folder:
+
+* gotcha.txt
+

