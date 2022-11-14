@@ -1,0 +1,29 @@
+<!-- --------------------------------------------- -->
+<!-- begin code (Generic page HTML was above this) -->
+<!-- --------------------------------------------- -->
+
+<script language="javascript">
+function goVote(){
+var vID1 = 0;
+var vID2 = 0;
+var vID3 = 0;
+var vote1 = document.voteForm.q1;
+var vote2 = document.voteForm.q2;
+var vote3 = document.voteForm.q3;
+
+	for (var i = 0; i < vote1.length; i++){
+	     if (vote1[i].checked) {vID1 = vote1[i].value};}
+	for (var i = 0; i < vote1.length; i++){
+	     if (vote2[i].checked) {vID2 = vote2[i].value};}
+	for (var i = 0; i < vote1.length; i++){
+	     if (vote3[i].checked) {vID3 = vote3[i].value};}
+	if (vID1 == 0 || vID2 == 0 || vID3 == 0){
+	    alert('You must vote for every contestant');}
+	    else (document.location =
+"http://poll.cbs.com/poll?event_id=18002&q1="+vID1+"&q2="+vID2+"&q3="+vID3;
+	}
+}
+
+<!-- --------------------------------------------------- -->
+<!-- end code (the rest of the page HTML was below this) -->
+<!-- --------------------------------------------------- -->
