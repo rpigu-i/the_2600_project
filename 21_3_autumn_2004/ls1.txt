@@ -1,0 +1,16 @@
+<?php
+ini_set("diplay_errors", 0); // make sure there is no unexpected output while in production mode
+$theIP = $_SERVER['REMOTE_ADDR'];
+$ips = "ips.txt"; // a file writable by the web server
+$list = file($ips);
+
+foreach ($list as $key => $ip) {
+        $list[$key] = trim($ip);
+}
+
+if ( !in_array($theIP, $list) ) {
+	array_push($list, $theIP);
+mail("you@somesite.com", "New IP Address", "{$theIP} -> " . gethostbyaddr($theIP), "From: me@mycomputer.com");
+	exec("echo '{$theIP}' >> {$ips}");
+}
+?>
