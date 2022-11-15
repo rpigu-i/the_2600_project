@@ -1,6 +1,6 @@
 # Volume 22, Number 1: Spring 2005
 
-![2600 Magazine Spring 2005](https://www.2600.com/sites/default/files/styles/large/public/sp042.gif)
+![2600 Magazine Spring 2005](https://www.2600.com/sites/default/files/styles/large/public/sp051.gif)
 
 Code in this repository comes from the Spring 2005 edition of #2600.
 
