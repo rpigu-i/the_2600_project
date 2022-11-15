@@ -1,0 +1,71 @@
+<?php
+ /*
+	DotTK Free Sub-Domain Script 1.02
+	By Trent Bradley
+	(C) 2005 Blue Collar Camel (http://www.bluecollarcamel.net/)
+
+	Change log:
+	1.02: Appends a "/" to the final redirect URL for the picky browsers/servers.
+	1.01: Fixed a bug that didn't remove the extra "." from the entered URL.
+            : Added the feature that (tries) to determine if it was a sub-domain that was entered.
+	1.00: Initial writing.
+
+ */
+
+ /******************************\
+ /* EDIT THESE VARIABLES ONLY! *\
+ /******************************\
+ 
+ // Your actual DotTK domain. Do not include the ".tk", "http://", or "www."
+ // Example: if your full URL was "http://www.downloadsite.tk/", you would put "downloadsite".
+ 
+ $yourDomain = "yourdottkdomain";
+ 
+ // The base URL for this script.
+ // Example: if the full URL to the script was "http://youraccount.freehost.com/thisscript.php",
+ // you'd put "http://youraccount.freehost.com/". You MUST include the last "/"!
+ 
+ $baseURL = "http://youraccount.freehost.com/";
+ 
+ \******************************/
+ \******************************/
+ \******************************/
+
+ // Get the entered domain name (by a visitor, you, etc.)
+ $fullDomain = $HTTP_SERVER_VARS['HTTP_REFERER'];
+
+ // Replace the "http://" with a blank value in the entered domain-name
+ $redirectPath = str_replace("http://", "", $fullDomain);
+
+ // Replace the "www." with a blank value in the entered domain-name
+ $redirectPath = str_replace("www.", "", $redirectPath);
+
+ // Replace your $yourDomain with a blank value in the entered domain-name
+ $redirectPath = str_replace("$yourDomain", "", $redirectPath);
+
+ // Replace the ".tk" with a blank value in the entered domain-name
+ $redirectPath = str_replace(".tk", "", $redirectPath);
+
+ // Replace all "."'s with a blank value in the entered domain-name
+ $redirectPath = str_replace(".", "", $redirectPath);
+
+ // Replace the (possible) end "/" with a blank value in the entered domain-name
+ $redirectPath = str_replace("/", "", $redirectPath);
+
+ /* 
+    Determine if the URL is a sub-domain. If the $redirectPath variable is blank, it means that this is NOT a sub-domain.
+    Note: This can easily be fooled by appending text to the end of the URL.
+    Example: "http://www.downloadsite.tk/foo"
+    That would cause the script to try and redirect to "http://youraccount.freehost.com/foo"
+ */
+ if (strlen($redirectPath) > 0) {
+  // Append the final redirection path to the base URL
+  $redirectPath = $baseURL . $redirectPath . "/";
+
+  // Redirect the (yours, visitor's, etc) browser to the actual location.
+  header("Location: $redirectPath");
+ }
+ else {
+  // If the URL isn't a sub-domain, the script simply displays your original index page. 
+ }
+?>

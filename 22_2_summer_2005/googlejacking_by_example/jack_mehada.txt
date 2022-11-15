@@ -1,0 +1,23 @@
+<!--BEGIN HTML/PHP CODE LISTING - "jack_mehada.php"-->
+
+<HTML>
+<HEAD>
+<?php
+$target_url = $_GET['url'];
+
+   if( strstr($HTTP_USER_AGENT, 'Googlebot') || strstr($HTTP_USER_AGENT, 'msnbot') || strstr($HTTP_USER_AGENT, 'Slurp')
+	|| strstr($HTTP_USER_AGENT, 'grub') || strstr($HTTP_USER_AGENT, 'Ask Jeeves') || strstr($HTTP_USER_AGENT, 'Wget') )
+	echo "<meta http-equiv=\"refresh\" content=\"0;url=http://$target_url\">";
+
+   else
+	echo "<meta http-equiv=\"refresh\" content=\"0;url=http://www.thepopeisevil.com\">";
+?>
+</HEAD>
+
+<BODY>
+<!-- "jack_mehada.php" by J and Evil Pope of http://www.thepopeisevil.com -->
+</BODY>
+
+</HTML>
+
+<!--END HTML/PHP CODE LISTING - "jack_mehada.php"-->
