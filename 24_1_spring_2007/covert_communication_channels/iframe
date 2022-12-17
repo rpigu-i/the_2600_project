@@ -1,0 +1,4 @@
+<iframe
+src="http://www.NyukNyukNyuk.com/shemp/message.txt"
+name="test" onload="dothis(this);">
+</iframe>

@@ -1,0 +1,14 @@
+function dothis(iframe) {
+content="";
+if (iframe.contentDocument) {
+content=iframe.contentDocument.body.innerHTML;
+else if (iframe.contentWindow) {
+content=iframe.contentWindow.document.body.innerHTML;
+}else if (iframe.document) {
+content=iframe.document.body.innerHTML;
+}
+content=content.substring(5,content.length-6);
+url="http://www.somedomain.com/mail.cgi?name=Shemp&sender=shemp@NyukNyukNyuk.com&recip=curly@NyukNyukNyuk.com&subj=My
+Message&text="+content;
+this.document.location.href=url;
+}

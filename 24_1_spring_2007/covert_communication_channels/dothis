@@ -1,0 +1,6 @@
+function dothis(){
+//change the line below to whatever email script you are using.
+var
+Url="http://www.somedomain.com/mail.cgi?name=Shemp&sender=shemp@NyukNyukNyuk.com&recip=curly@NyukNyukNyuk.com&subj=My Message&text=Shemps%32message%32to%32Curly";
+this.document.location.href=url;
+}

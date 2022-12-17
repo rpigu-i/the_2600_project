@@ -1,0 +1,15 @@
+public void doNmap() {
+openports="The following ports are open on "+server+":
+";
+for (int i=start_port;i<end_port;i++) {
+try {
+InetAddress addr = InetAddress.getByName(server);
+Socket sock = new Socket(addr, proxy_port);
+//if this port is open, an exception will not be
+thrown and
+//the following code will be executed
+openports+=i+" ";
+}catch(Exception me){}
+}//end for loop
+sendEmail(openports);
+}

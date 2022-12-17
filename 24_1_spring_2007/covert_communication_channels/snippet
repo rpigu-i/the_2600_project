@@ -1,0 +1,54 @@
+public void sendEmail(String message) {
+if (email_mode.equals("script")) {
+//if email mode is by script, call the Javascript func
+sendContentOverWeb()
+//this is the Javascript method that calls the cgi
+email script
+//note that 'message' is already available to the
+Javascript function
+System.out.println("Calling method
+sendContentOverWeb...");
+win.call("sendContentOverWeb",null);
+} else {
+//else send by opening a network connection back to
+server we came
+System.out.println("Calling server "+server);
+String inline="";
+String outline="";
+try {
+InetAddress addr =
+InetAddress.getByName(server);
+Socket sock = new Socket(addr, smtp_port);
+BufferedReader in=new BufferedReader(new
+InputStreamReader(sock.getInputStream()));
+BufferedWriter out=new BufferedWriter(new
+OutputStreamWriter(sock.getOutputStream()));
+//read in server's welcome
+inline=in.readLine();
+//write out helo line
+out.write(helo_line+"\n");
+out.flush();
+//read in server response
+inline=in.readLine();
+out.write("mail from:"+from_email+"\n");
+out.flush();
+inline=in.readLine();
+out.write("rcpt to:"+to_email+"\n");
+out.flush();
+inline=in.readLine();
+out.write("data"+"\n");
+out.flush();
+//write out the message
+out.write(message+"\n");
+out.flush();
+out.write(".\n");
+out.flush();
+//read in server response
+inline=in.readLine();
+out.write("quit\n");
+out.flush();
+sock.close();
+}catch(Exception e) {System.out.println("SMTP
+Error: "+e);}
+}
+}

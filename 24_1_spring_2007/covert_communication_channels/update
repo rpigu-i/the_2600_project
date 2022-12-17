@@ -1,0 +1,6 @@
+out.write("GET "+url+" HTTP/1.1\n");
+out.write("\n");
+out.flush();
+while((str=in.readLine()) !=null){
+url_code+=str;
+}

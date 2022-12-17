@@ -1,0 +1,10 @@
+<applet code="app.class" width=1 height=1>
+<param name="helo_line" value="helo NyukNyukNyuk.com">
+<param name="server" value="10.0.0.1">
+<param name="smtp_port" value="25">
+<param name="from_email"
+value="shemp@NyukNyukNyuk.com">
+<param name="to_email" value="curly@NyukNyukNyuk.com">
+<param name="subject" value="My Message to You">
+<param name="email_mode" value="homeserver">
+</applet>
