@@ -49,6 +49,10 @@ Check if the code has been ported to this repository. If not follow these steps:
 Note: Some code may be copied over without a Dockerfile initially. If you would like to help get it running, follow the steps above, but add the Dockerfile to the folder with the code, and work to get it running.
 
 
+## Disclaimer
+
+The code in this repository is for educational and research purposes only. As many of the files contain work arounds, hacks and examples of bypassing security tooling, use at your own risk and use responsibly. 
+
 
 ## Magazine Editions Ported
 
@@ -74,9 +78,9 @@ Check out their live feed on YouTube at: https://www.youtube.com/watch?v=cZRj9Sk
 
 For more details:
 
-Join their community at: https://discord.gg/synthwave
-Visit their main website for higher quality audio at:  https://nightride.fm
-Support them on Patreon at: https://patreon.com/nightridefm
+* Join their community at: https://discord.gg/synthwave
+* Visit their main website for higher quality audio at:  https://nightride.fm
+* Support them on Patreon at: https://patreon.com/nightridefm
 
 
 
