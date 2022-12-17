@@ -1,0 +1,40 @@
+Chat Code:::::
+<html>
+<td id="lblScript"><script language='Javascript'> isMac =
+(navigator.appVersion.indexOf("Mac")!=-1) ? true : false;
+IEmac = ((document.all)&&(isMac)) ? true : false;
+IEwin = ((document.all)&&(navigator.appVersion.indexOf("MSIE")!=-1) &&
+!isMac) ? true :
+false;
+NS = (navigator.appName.indexOf("Netscape")!=-1) ? true : false;
+document.writeln("<APPLET NAME='DigiChat'
+CODEBASE='http://fanclubchat.musictoday.com/DigiChat/DigiClasses/' ");
+document.writeln("CODE='com.diginet.digichat.client.DigiChatApplet' ");
+document.writeln("HEIGHT=100 WIDTH=200 ALIGN='MIDDLE' ");
+if (isMac)
+document.writeln("ARCHIVE=Client_Mac.jar MAYSCRIPT>");
+else if (!isMac)
+{
+if (IEwin)
+{
+document.writeln("ARCHIVE=Client_Plugin.jar MAYSCRIPT>");
+document.write(" <PARAM NAME=cabbase value=Client_IE.cab>");
+document.write(" <PARAM NAME=useslibrary value=DigiChat Applet>");
+document.write(" <PARAM NAME=namespace value=Digi-Net>");
+document.write(" <PARAM NAME=useslibrarycodebase value=Client_IE.cab>");
+document.write(" <PARAM NAME=useslibraryversion value=4,0,1,0>");
+}
+else if (NS)
+document.writeln("ARCHIVE='Client_NS.jar' MAYSCRIPT>");
+}
+document.write(" <PARAM NAME=nickname VALUE=Admin>");
+document.write(" <PARAM NAME=language VALUE=english.lang>");
+document.write(" <PARAM NAME=siteID VALUE=1008>");
+document.write(" <PARAM NAME=background VALUE=606A6D>");
+document.write(" <PARAM NAME=signed VALUE=true>");
+document.write(" <PARAM NAME=textcolor VALUE=000000>");
+document.write(" DigiChat requires a Java Compatible web browser to run. ");
+document.write(" </APPLET>");
+</script></td>
+</html>
+END Chat Code:::::

