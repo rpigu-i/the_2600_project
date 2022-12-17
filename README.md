@@ -1,13 +1,20 @@
-# The 2600 Project Code Archive
-
+# _____ _            _____   ____ _____  _____  ______          _           _     _____           _         ___           _     _           
+#|_   _| |          / __  \ / ___|  _  ||  _  | | ___ \        (_)         | |   /  __ \         | |       / _ \         | |   (_)          
+#  | | | |__   ___  `' / /'/ /___| |/' || |/' | | |_/ / __ ___  _  ___  ___| |_  | /  \/ ___   __| | ___  / /_\ \_ __ ___| |__  ___   _____ 
+#  | | | '_ \ / _ \   / /  | ___ \  /| ||  /| | |  __/ '__/ _ \| |/ _ \/ __| __| | |    / _ \ / _` |/ _ \ |  _  | '__/ __| '_ \| \ \ / / _ \
+#  | | | | | |  __/ ./ /___| \_/ \ |_/ /\ |_/ / | |  | | | (_) | |  __/ (__| |_  | \__/\ (_) | (_| |  __/ | | | | | | (__| | | | |\ V /  __/
+#  \_/ |_| |_|\___| \_____/\_____/\___/  \___/  \_|  |_|  \___/| |\___|\___|\__|  \____/\___/ \__,_|\___| \_| |_/_|  \___|_| |_|_| \_/ \___|
+                                                             _/ |                                                                          
+                                                           |__/                                                                           
 A project to containerize all the code from every 2600 magazine and serve from K8s or other container serving environment. This project is not linked to #2600 Magazine (https://www.2600.com/) in any official capacity. 
 
 
 ## Background
 
-The ourpose of this project is to collect all the old source code published in 2600, and create a set of container so these can be run.
+The purpose of this project is to collect all the old source code published in 2600, and create a set of containers so these can be run.
 Not only does this preserve the code for future research, container based environments will allow you to run legacy operating systems and packages.
 
+Threfore what we are creating is an archive of legacy code that will be available to anyone interested in running it, researching it or experimenting with it.
 
 
 ## Contributing
@@ -29,4 +36,36 @@ Check if the code has been ported to this repository. If not follow these steps:
 
 
 Note: Some code may be copied over without a Dockerfile initially. If you would like to help get it running, follow the steps above, but add the Dockerfile to the folder with the code, and work to get it running.
+
+
+
+## Magazine Editions Ported
+
+* Spring 2004
+* Summer 2004
+* Autumn 2004
+* Winter 2004
+* Spring 2005
+* Summer 2005
+* Autumn 2005
+* Winter 2005
+* Spring 2006
+* Summer 2006
+* Autumn 2006
+
+
+## Thanks and ShoutOuts
+
+
+Thanks to Nightride FM for providing an awesome soundtrack for porting the code over.
+
+Check out their live feed on YouTube at: https://www.youtube.com/watch?v=cZRj9Sk0IPc
+
+For more details:
+
+Join their community at: https://discord.gg/synthwave
+Visit their main website for higher quality audio at:  https://nightride.fm
+Support them on Patreon at: https://patreon.com/nightridefm
+
+
 
