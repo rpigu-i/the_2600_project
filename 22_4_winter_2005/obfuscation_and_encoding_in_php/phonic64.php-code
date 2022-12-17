@@ -1,0 +1,115 @@
+function phonic64_encode($s) {
+  mt_srand(microtime(true)*1000000);
+  $med=base64_encode($s);
+  $consonants=Array('','k','g','s','z','t','d','n','h','b','p','m','y','r','w','v','j');
+  $vowels=Array('a','e','i','o');
+  $b64="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+  $eos=Array('!  ','?  ','!?  ','!!!  ');
+  $sspunct=Array(', ', '; ', ' - ');
+  $oc='f'; $ov='u';
+  $word="";$wct=0;$wln=mt_rand(1,4);
+  $sentence="";$sct=0;$sln=mt_rand(3,10);
+  $paragraph="";$pct=0;$pln=mt_rand(1,10);
+  $out="     ";
+  for ($i=0; $i<strlen($med); $i++) {
+    $ch=substr($med,$i,1);
+    $v=strpos($b64,$ch);
+    if ($v===false) continue;
+    $cons=floor($v/4);
+    $vowel=$v&3;
+    if (($sct==0)&&($wct==0)) {
+      $word.=strtoupper($consonants[$cons]);
+    }else{
+      $word.=$consonants[$cons];
+    }
+    if (($sct==0)&&($wct==0)&&($consonants[$cons]=='')) {
+      $word.=strtoupper($vowels[$vowel]);
+    }else{
+      $word.=$vowels[$vowel];
+    }
+    $wct++;
+    if ($wct==$wln) {
+      $sentence.="$word";
+      $word="";$wct=0;$wln=mt_rand(1,4);
+      $sct++;
+      if ($sct!=$sln) { 
+        if (mt_rand(0,9)==5) { 
+          $g=mt_rand(0,sizeof($sspunct)-1);   
+          $sentence.=$sspunct[$g]; 
+        }else $sentence.=" "; 
+      }else{
+        $paragraph.=$sentence;
+        $sentence="";$sct=0;$sln=mt_rand(3,10);
+        if (mt_rand(0,6)==5) {
+          $g=mt_rand(0, sizeof($eos)-1);
+          $paragraph.=$eos[$g];
+        }else $paragraph.=".  ";
+        $pct++;
+        if ($pct==$pln) {
+          $out.=$paragraph;
+          $paragraph="";$pct=0;$pln=mt_rand(1,10);
+          $out.="\r\n     ";
+        } 
+      }
+    }
+    $t=$oc;$oc=$consonant[$cons];$consonant[$cons]=$t;
+    $t=$ov;$ov=$vowels[$vowel];$vowels[$vowel]=$t;
+  }
+  if ($wct!=0) {
+    $sentence.=$word;
+    $sct++;
+  }
+  if ($sct!=0) {
+    $paragraph.=trim($sentence);
+    if (mt_rand(0,6)==5) {
+      $g=mt_rand(0, sizeof($eos)-1);
+      $paragraph.=$eos[$g];
+    }else $paragraph.=".";
+    $pct++;
+  }
+  if ($pct!=0) $out.=$paragraph;
+  return $out;
+}
+function phonic64_decode($s) {
+  $mid=strtolower(preg_replace("/[\s\.\!\?\;\-\,\r\n]/", "", $s));
+  $consonants=Array('','k','g','s','z','t','d','n','h','b','p','m','y','r','w','v');
+  $vowels=Array('a','e','i','o');
+  $b64="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+  $oc='f'; $ov='u'; $state=false; $base="";
+  for ($i=0; $i<strlen($mid); $i++) {
+    $char=substr($mid,$i,1);
+    switch ($state) {
+      case false:
+        $state=true;
+        $cons=array_search($char,$consonants);
+        if (!$cons) { $cons=0; $i--; }
+        break;
+      case true:
+        $state=false;
+        $g=array_search($char,$vowels);
+        $t=$ov;$ov=$vowels[$g];$vowels[$g]=$t;
+        $t=$oc;$oc=$consonant[$cons];$consonant[$cons]=$t;
+        $v=$cons*4+$g;
+        $base.=substr($b64,$v,1);
+        break;
+    }
+  }
+  while (strlen($base)%4!=0) $base.="=";
+  return base64_decode($base);
+}
+function phonic_password($len) {
+  mt_srand(microtime(true)*1000000);
+  $seed="";
+  for ($i=0; $i<32; $i++) {
+    $seed.=chr(mt_rand(0,255));
+  }
+  $uncpass=phonic64_encode($seed);
+  $midpass=preg_replace("/[\s\.\!\?\;\-\,\r\n]/", "", $uncpass);
+  $finpass=strtolower(substr($midpass,0,$len-mt_rand(1,3)));
+  while (strlen($finpass)<$len) {
+    $finpass.=mt_rand(0,9);
+  }
+  return $finpass;
+}
+
+

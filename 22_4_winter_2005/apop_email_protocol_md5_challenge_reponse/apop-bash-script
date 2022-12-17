@@ -1,0 +1,21 @@
+#ApopCrack 
+#$1 is the wordlist file
+#$2 is the challenge sent by the server
+#$3 is the response sent by the client
+
+
+#start looping through each line in the wordlist file
+exec { $1
+while read PassWord
+
+do
+
+#if the md5 hash matches, echo the word that worked and exit
+
+if [[ `md5 -qs $2$PassWord` = $3 ]]
+then
+   echo $PassWord
+   exit
+fi
+
+done
