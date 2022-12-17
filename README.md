@@ -35,13 +35,13 @@ Check if the code has been ported to this repository. If not follow these steps:
 
 1. Grab this repository by forking it.
 
-2. Create a folder/use the folder for the magazine edition e.g. `23-4: Winter 2006-2007`
+2. Create a folder/use the folder for the magazine edition e.g. `23-4: Winter 2006-2007` would be: `23_4_winter_2006`
 
-3. Clone and add a Dockerfile for the project
+3. Clone and add a Dockerfile for the project, or other environment file required to run the code. 
 
 4. Add in the code from 2600 Magazine
 
-5. Get it running and update the README, including the magazine edition, a quick synopsis and the original author who created it. 
+5. Get it running and update the README, including the magazine edition, a quick synopsis and the original author who created it. Any instructions to run the code should be included.
 
 6. Create a PR from your Fork to this repository
 
