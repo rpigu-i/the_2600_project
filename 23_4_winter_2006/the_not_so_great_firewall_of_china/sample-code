@@ -1,0 +1,9 @@
+#!/usr/bin/perl -w
+# fw.pl - make text W-I-DE
+(convert ascii to fullwidth)
+use encoding "UTF-8";
+$input = $ARGV[0] or die("need
+one argument for text");
+foreach (split //, $input) { print
+chr(0xFEE0 + ord($_)); }
+## end script
