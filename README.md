@@ -75,7 +75,7 @@ The code in this repository is for educational and research purposes only. As ma
 ## Thanks and ShoutOuts
 
 
-Thanks to Nightride FM for providing an awesome soundtrack for porting the code over.
+Thanks to Nightride FM for providing an awesome soundtrack while porting the code over.
 
 Check out their live feed on YouTube at: https://www.youtube.com/watch?v=cZRj9Sk0IPc
 
