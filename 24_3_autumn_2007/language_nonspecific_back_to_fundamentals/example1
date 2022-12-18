@@ -1,0 +1,11 @@
+Int A = 2;
+Int B = 14;
+Int C;
+Int main(){
+C = A/B;
+IF (C > 7){
+Printf ("C is greater than 7");
+}else{
+Printf("C is less than 7");
+}
+}

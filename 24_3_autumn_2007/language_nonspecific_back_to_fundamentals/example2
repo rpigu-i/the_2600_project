@@ -1,0 +1,15 @@
+Int A;
+Int B;
+Int C;
+Int main(){
+C = divide(A,B);
+IF (C > 7){
+Printf ("C is greater than 7");
+}else{
+Printf("C is less than 7");
+}}
+Int divide(int a, int b){
+Int c;
+c = a/b;
+return c;
+}

@@ -1,0 +1,67 @@
+class radio;
+float tunedTo;
+float minimumStep;
+int minimumFrequency;
+int maximumFrequency;
+int maxVolume;
+int currentVolume;
+bool modType; // false = am - true = fm
+int presetStation();
+int pre;
+function tuneUp()
+{
+newFreq = tunedTo + minimumStep
+if newFreq <= maximumFrequency
+tunedTo = newFreq
+else
+print 'max'
+break
+}
+function tuneDown()
+{
+newFreq = tunedTo - minimumStep
+if newFreq >= minimumFrequency
+tunedTo = newFreq
+else
+print 'min'
+break;
+}
+function toggleModulation()
+{
+if modType = true
+modType = false
+minimumFrequency = 530
+maximumFrequency = 1700
+minimumStep = 10
+print 'am tuning';
+else
+modType = true
+minimumFrequency = 87.5
+maximumFrequency = 108.0
+minimumStep = .5
+print 'fm tuning';
+end if
+}
+function selectPreset()
+{
+tunedTo = presetStation(pre);
+}
+function volumeUp()
+{
+if currentVolume < maxVolume
+currentVolume++;
+else
+print 'volume already at max';
+break;
+end if
+}
+function volumeDown()
+{
+if currentVolume > 0
+currentVolume--;
+else
+print 'volume already at zero';
+break;
+end if
+}
+end radio;

