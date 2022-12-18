@@ -69,6 +69,7 @@ The code in this repository is for educational and research purposes only. As ma
 * Autumn 2006
 * Winter 2006
 * Spring 2007
+* Summer 2007
 
 ## Thanks and ShoutOuts
 
