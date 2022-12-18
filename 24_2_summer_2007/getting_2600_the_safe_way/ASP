@@ -1,0 +1,79 @@
+<%
+Option Explicit
+On Error Resume Next
+Dim oHttp, sTemp, iComic, iStart, iEnd, aUrls(3), aSrch(3), aComics(3), a
+Set oHttp = CreateObject("Msxml2.ServerXMLHTTP.3.0")
+aUrls(0) = "http://www.2600.com/"
+aSrch(0) = "images/covers"
+aUrls(1) = "http://www.dilbert.com/"
+aSrch(1) = "TODAY'S COMIC"
+aUrls(2) = "http://www.gocomics.com/thequigmans/"
+aSrch(2) = "comics/tmqui"
+%>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>Comics page</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+</head>
+<body>
+<table width=590 cellspacing=5 cellpadding=5>
+<tr><td class='linetop' colspan=4 align=left valign=bottom>Comics</td></tr>
+<%
+' loop through all of the URLs in the array
+For a = 0 to Ubound(aUrls) - 1
+aComics(a) = ""
+' get the text from the given page
+sTemp = getLink(aUrls(a), oHttp)
+' if there is text
+If Len(sTemp) > 0 Then
+' look for the token
+iComic = InStr(UCase(sTemp), UCase(aSrch(a)))
+If iComic > 0 Then
+' look for the image tag
+iStart = InStrRev(UCase(sTemp), "<IMG", iComic)
+If iStart > 0 Then
+' look for the closing > of the image tag
+iEnd = InStr(iStart, sTemp, ">") + 1
+If iEnd > 0 Then
+' get the image tag text
+aComics(a) = Mid(sTemp, iStart, iEnd - iStart)
+' replace the src with one pointing to the originating website
+If InStr(aComics(a), "SRC=""/") > 0 Then
+aComics(a) = Replace(aComics(a), "SRC=""/", "SRC=""" & aUrls(a))
+ElseIf InStr(aComics(a), "SCR='") > 0 Then
+aComics(a) = Replace(aComics(a), "SRC='", "SRC='" & aUrls(a))
+Else
+aComics(a) = Replace(aComics(a), "SRC=""", "SRC=""" & aUrls(a))
+End If
+' write the image tag out with a hyperlink to the originating website
+Response.Write "<tr><td align=center><a href=""" & aUrls(a) & """>" & aComics(a) & "</a></td></tr>" & vbcrlf
+End If
+End If
+End If
+End If
+Next
+%>
+<tr><td class='linebottom' colspan=4 align=center valign=top>&nbsp;</td></tr>
+</table>
+</body>
+</html>
+<%
+Function getLink( sUrl, oHttp )
+Dim RefPage
+On Error Resume Next
+getLink = ""
+' open the url
+oHttp.Open "GET", sUrl, False
+If Err.Number = 0 Then
+'send the request
+oHttp.Send
+If Err.Number = 0 Then
+' get the response
+RefPage = oHttp.responseText
+' return the response if the page is found
+If InStr(RefPage, "NOT FOUND" ) = 0 Then getLink = RefPage
+End If
+End If
+End Function
+%>

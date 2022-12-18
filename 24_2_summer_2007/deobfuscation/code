@@ -1,0 +1,42 @@
+<?php ini_set('include_path',dirname(__FILE__));
+function decrypt($key,$cyphertext)
+{
+$s='';
+$i=0;
+$keylen=strlen($key);
+$char=hexdec('&H'.substr($cyphertext,0,2));
+for($j=2;$j<strlen($cyphertext);$j+=2)
+{
+$cypherbyte=hexdec(trim(substr($cyphertext, $j, 2)));
+$i=(($i<$keylen) ? ($i + 1) : 1);
+$plainbyte=$cypherbyte ^ ord(substr($key, $i-1, 1));
+if($plainbyte<=$char)
+$plainbyte=255+$plainbyte-$char;
+else
+$plainbyte=$plainbyte-$char;
+$s=$s.chr($plainbyte);
+$char=$cypherbyte;
+}
+return $s;
+}
+function y0666f0acdeed38d4cd9084ade1739498($x897356954c2cd3d41b221e3f24f99bba,$x276e79316561733d64abdf00f8e8ae48)
+{return decrypt($x897356954c2cd3d41b221e3f24f99bba,$x276e79316561733d64abdf00f8e8ae48);}
+function loadFile($x)
+{return implode('',file($x));}
+function f0666f0acdeed38d4cd9084ade1739498($x)
+{return loadFile($x);}
+function checkFile($s)
+{
+return (strstr($s,'echo')==false?
+(strstr($s,'print')==false)?
+(strstr($s,'sprint')==false)?
+(strstr($s,'sprintf')==false)?
+false:
+exit():
+exit():
+exit():
+exit());
+}
+function g0666f0acdeed38d4cd9084ade1739498($s)
+{return checkFile($s);}
+ini_set('include_path','.');?>

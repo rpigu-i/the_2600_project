@@ -1,0 +1,5 @@
+<?php
+$searchFor = ""
+$replaceWith = " script"
+$text = str_replace($searchFor , $replaceWith , $text);
+?>

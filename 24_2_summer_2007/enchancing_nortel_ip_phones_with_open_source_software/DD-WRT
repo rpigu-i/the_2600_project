@@ -1,0 +1,105 @@
+DD-WRT Startup Script
+(remember not to enable OpenVPN in the DD-WRT GUI since this script calls it for you)
+echo 'sleep 8' >> /tmp/vpngo.sh
+mkdir /tmp/openvpn
+echo "
+-----BEGIN CERTIFICATE-----
+***Add Your IPcop Server Cert HERE!!***
+-----END CERTIFICATE-----
+" > /tmp/openvpn/ca.crt
+echo "
+-----BEGIN CERTIFICATE-----
+***ADD Your IPcop Client Cert HERE!!***
+-----END CERTIFICATE-----
+" > /tmp/openvpn/client.crt
+echo "
+-----BEGIN RSA PRIVATE KEY-----
+***Add Your IPCop Private Key HERE!!**
+-----END RSA PRIVATE KEY-----
+" > /tmp/openvpn/client.key
+echo "client
+dev tun
+proto udp
+remote ***YOUR PUBLIC IPCOP SERVER*** 1194
+resolv-retry infi nite
+nobind
+persist-key
+persist-tun
+fl oat
+keepalive 10 120
+tun-mtu 1400
+tun-mtu-extra 32
+mssfi x 1300
+ca /tmp/openvpn/ca.crt
+cert /tmp/openvpn/client.crt
+key /tmp/openvpn/client.key" > /tmp/openvpn/openvpn.conf
+echo 'iptables -A POSTROUTING -t nat -o tun0 -j MASQUERADE' > /tmp/openvpn/route-up.sh
+echo 'iptables -D POSTROUTING -t nat -o tun0 -j MASQUERADE' > /tmp/openvpn/route-down.sh
+echo 'iptables -t nat -I PREROUTING -i tun0 -p udp --dport 5000:5300 - j DNAT --to-destination 192.168.1.10' >> /tmp/vpngo.sh
+echo 'iptables -I INPUT -p tcp --dport 443 -j logaccept' >> /tmp/vpngo.sh
+echo 'iptables -I INPUT -p tcp --dport 22 -j logaccept' >> /tmp/vpngo.sh
+chmod 777 /tmp/openvpn/route-up.sh
+chmod 777 /tmp/openvpn/route-down.sh
+echo 'result=0' >> /tmp/vpngo.sh
+echo 'pingloss=0' >> /tmp/vpngo.sh
+echo 'pingloss2=0' >> /tmp/vpngo.sh
+echo 'rm /tmp/vpngo.sh' >> /tmp/vpngo.sh
+echo 'rm /tmp/vpngo.sh' >> /tmp/vpngo.sh
+echo 'rm /tmp/keypass' >> /tmp/vpngo.sh
+echo 'date 092011082007' >> /tmp/vpngo.sh
+echo 'touch /tmp/keypass' >> /tmp/vpngo.sh
+echo 'echo '***PKCS12 File Password***' > /tmp/keypass' >> /tmp/vpngo.sh
+echo '/usr/sbin/openvpn --confi g /tmp/openvpn/openvpn.conf --route-up /tmp/openvpn/route- up.sh --down /tmp/openvpn/route-down.sh --askpass /tmp/keypass' >> /tmp/vpngo.sh
+echo ' sleep 60' >> /tmp/vpngo2.sh
+echo ' while [ "x" ]' >> /tmp/vpngo2.sh
+echo ' do' >> /tmp/vpngo2.sh
+echo ' sleep 12' >> /tmp/vpngo2.sh
+echo ' result=`ifconfi g tun0 2>&1 | grep -c RUNNING`' >> /tmp/vpngo2.sh
+echo ' if [ $result -eq 0 ]' >> /tmp/vpngo2.sh
+echo ' then' >> /tmp/vpngo2.sh
+echo ' sleep 10' >> /tmp/vpngo2.sh
+echo ' result=`ifconfi g tun0 2>&1 | grep -c RUNNING`' >> /tmp/vpngo2.sh
+echo ' if [ $result -eq 0 ]' >> /tmp/vpngo2.sh
+echo ' then' >> /tmp/vpngo2.sh
+echo ' while [ $result -eq 0 ]' >> /tmp/vpngo2.sh
+echo ' do' >> /tmp/vpngo2.sh
+echo ' killall openvpn' >> /tmp/vpngo2.sh
+echo ' /usr/sbin/openvpn --confi g /tmp/openvpn/openvpn.conf --route-up /tmp/openvpn/route-up.sh --down /tmp/openvpn/route-down.sh --askpass /tmp/keypass &' >> /tmp/vpngo2.sh
+echo ' sleep 40' >> /tmp/vpngo2.sh
+echo ' iptables -t nat -I PREROUTING -i tun0 -p udp --dport 5000:5300 -j DNAT --to-destination 192.168.1.10' >> /tmp/vpngo2.sh
+echo ' iptables -I INPUT -p tcp --
+dport 443 -j logaccept' >> /tmp/vpngo2.sh
+echo ' iptables -I INPUT -p tcp --dport 22 -j logaccept' >> /tmp/vpngo2.sh
+echo ' result=`ifconfi g tun0 2>&1 | grep -c RUNNING`' >> /tmp/vpngo2.sh
+echo ' done' >> /tmp/vpngo2.sh
+echo ' result=`ifconfi g tun0 2>&1 | grep -c RUNNING`' >> /tmp/vpngo2.sh
+echo ' fi ' >> /tmp/vpngo2.sh
+echo ' fi ' >> /tmp/vpngo2.sh
+echo ' sleep 11' >> /tmp/vpngo2.sh
+echo ' pingloss2=`ping -c 5 172.16.201.11 | grep -c "100% packet loss"`' >> /tmp/vpngo2.sh
+echo ' if [ $pingloss2 -eq 1 ]' >> /tmp/vpngo2.sh
+echo ' then' >> /tmp/vpngo2.sh
+echo ' sleep 10' >> /tmp/vpngo2.sh
+echo ' pingloss2=`ping -c 8 172.16.201.11 | grep -c "100% packet loss"`' >> /tmp/vpngo2.sh
+echo ' if [ $pingloss2 -eq 1 ]' >> /tmp/vpngo2.sh
+echo ' then' >> /tmp/vpngo2.sh
+echo ' pingloss3=`ping -c 8 ***YOUR PUBLIC IPCOP SERVER*** | grep -c "100% packet loss"`' >> /tmp/vpngo2.sh
+echo ' if [ $pingloss3 -eq 0 ]' >> /tmp/vpngo2.sh
+echo ' then' >> /tmp/vpngo2.sh
+echo ' killall openvpn' >> /tmp/vpngo2.sh
+echo ' sleep 1' >> /tmp/vpngo2.sh
+echo ' /usr/sbin/openvpn --confi g /tmp/openvpn/openvpn.conf --route-up /tmp/openvpn/route-up.sh --down /tmp/openvpn/route-down.sh --askpass /tmp/keypass &' >> /tmp/vpngo2.sh
+echo ' sleep 2' >> /tmp/vpngo2.sh
+echo ' fi ' >> /tmp/vpngo2.sh
+echo ' fi ' >> /tmp/vpngo2.sh
+echo ' fi ' >> /tmp/vpngo2.sh
+echo ' done' >> /tmp/vpngo2.sh
+chmod 777 /tmp/vpngo.sh
+chmod 777 /tmp/vpngo2.sh
+chmod 777 /tmp/keypass
+sh /tmp/vpngo.sh &
+sh /tmp/vpngo2.sh
+***DD-WRT Firewall Script****
+iptables -t nat -I PREROUTING -i tun0 -p udp --dport 5000:5300 -j DNAT --to-destination 192.168.1.10
+iptables -I INPUT -p tcp --dport 22 -j logaccept
+iptables -I INPUT -p tcp --dport 443 -j logaccept

