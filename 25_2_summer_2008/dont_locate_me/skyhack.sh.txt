@@ -1,0 +1,19 @@
+#!/bin/sh 
+# skyhack.sh 2008 
+wlanconfig ath0 destroy 
+ifconfig wifi0 down 
+macchanger wifi0 -m $1 
+wlanconfig ath0 create wlandev wifi0 wlanmode Master -bssid 
+iwconfig ath0 essid skyhack 
+iwconfig ath0 channel 6 
+ifconfig ath0 inet 192.168.1.5 netmask 255.255.255.0 broadcast 192.168.1.255 
+route add default gw 192.168.1.1 
+ifconfig eth0 0.0.0.0 down 
+ifconfig ath0 0.0.0.0 down 
+brctl addbr br0 
+brctl addif br0 eth0 
+brctl addif br0 ath0 
+brctl stp br0 off 
+ifconfig br0 192.168.1.5 
+ifconfig eth0 up 
+ifconfig ath0 up 

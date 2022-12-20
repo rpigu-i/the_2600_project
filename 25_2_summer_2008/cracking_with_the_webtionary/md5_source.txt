@@ -1,0 +1,451 @@
+<?php
+/*****************************************************************************************************
+	Crack MD5 v.03
+	by Acrobatic (jbnunn@gmail.com)
+	GNU General Public License, have fun with it
+	
+	Light-force crack of exposed MD5 hashes
+	
+	-	"Light-force" because we're not brute-forcing through a huge database of decrypted keys. 
+		You can do that all over the internet (shout out to gdataonline.com). We're just showing 
+		proof-of-concept by using search engines to find keys and their plaintext.
+		
+	-	We do use our own database to store successful deciphers made from this application. Mainly
+		because we're limited to a certain amount of API calls per day on Yahoo and Google.
+		
+	-	Theoretically, if enough pages of hash / plaintext combinations were cataloged by seach 
+		engines across the internet, we could use the processing power of Google and Yahoo to search 
+		much more efficiently than searching millions of rows in a database
+		
+	- 	We search Google first, because if there are search results returned, the plaintext is almost
+		always found in the page summary. With Yahoo we have to do a bit more checking.
+			
+	Changelog
+	
+	# version .02:
+	- added database support for caching found hashes
+	- changed regex's a little (still need some vodoo to make them more efficient)
+	- organized the code to be more modular
+	- added memory limits because it crashed when a large html page was loaded 
+		(instead of skipping this page we might need to figure out how to better parse it into manageable chunks)
+	- now searches Yahoo's summary field for each page (as well as the URL name and page content)
+	- added debug content
+	- made user agent show $_SERVER['HTTP_USER_AGENT'] instead of "spider"
+	
+	# version .03:
+	- added upper/lower case hash searches, and searches with punctuation removed
+	- added Google search (without API)
+	- fixed sorting bug where keyes were being lost
+	- made use of php's parse_url instead of homegrown verison
+	- made regular expressions more efficient
+	- removed dependency on external filter for cleaning input
+	- removed references to database (add your own if you want to use a database as a backup for stored hashses)
+
+	
+*****************************************************************************************************/
+
+
+$time_start = microtime(true);	// Time script execution (PHP 5 only)
+ini_set("memory_limit","10M");	// Increase memory size for large arrays
+ini_set(max_execution_time,120);	// 2 minutes to run through the results
+
+// Setup variables and constants
+$yahoo_appid = "yourownappid";	// Use your own APP ID from Yahoo
+$url_list = array();
+$found = FALSE;
+$found_location = FALSE;	// Found in google / yahoo
+
+function searchYahoo($query) {
+	/* Search Yahoo for the query. Searches both the URL address and page content */
+	global $yahoo_appid;
+	global $filter;
+	global $found_location;
+	
+	// Get the Yahoo REST output
+	$request =  "http://api.search.yahoo.com/WebSearchService/V1/webSearch?appid=$yahoo_appid&query=$query&results=10&output=php";
+	$response = file_get_contents($request);
+
+	if ($response === false) {
+		// Request for page failed... error check or graceful exit here
+		die('Oops, we messed something up... try another hash.');
+	}
+
+	$phpobj = unserialize($response);
+	
+	// First we need to search the page URL (title) itself. 
+	foreach($phpobj['ResultSet'] as $result) {
+		if(is_array($result)) {
+			foreach($result as $child) {
+				$url_list[] = $child['Url'];
+			}
+		}
+	} 
+	
+	if(!$url_list || count($url_list) == 0) {
+		return false;
+	}
+	
+		$url_check = array();
+		$url_breakdown_array = array();
+
+		foreach($url_list as $url) {
+			$parsed_data = parse_url($url);
+
+			// Breakdown the path for plaintext searching
+			$url_array = str_replace(array('/','.','_'),' ',$parsed_data['path']);
+			$url_check[] = split(' ',$url_array);
+			
+			
+			// Breakdown the query for plaintext searching
+			$url_array = str_replace(array('=','+','amp;','&','quot;'),' ',$parsed_data['query']);
+			$url_check[] = split(' ',$url_array);
+		}
+		
+		
+		foreach($url_check as $url_set) {
+			foreach($url_set as $url) {
+				if(trim($url) != '') {
+					$url_breakdown_array[] = $url;
+				}
+			}
+		}
+	
+	// Sort the array in order of most frequent word
+		$url_breakdown_array = array_count_values($url_breakdown_array);
+		array_multisort($url_breakdown_array, SORT_DESC);
+		$url_breakdown_array = array_keys($url_breakdown_array);
+		
+	foreach($url_breakdown_array as $plaintext) {
+		$found = checkHash($query, $plaintext);
+		if($found) {
+			$found_location = "YAHOO_URL";
+			return $found;
+		} 
+	}
+	
+	// URL didn't contain hash? Loop through results and search within the Yahoo "Summary" field
+	foreach($phpobj['ResultSet'] as $result) {
+		if(is_array($result)) {
+			foreach($result as $child) {
+				$summary_list[] = $child['Summary'];
+			}
+		}
+	} 
+	
+	$summary_array = array();
+	$summary_breakdown_array = array();
+	
+	foreach($summary_list as $summary) {
+		$summary_array[] = split('/|\?|=|\-|\.|\_|\&amp;|\&quot;|\ |\,|\"|\'',$summary);	// Inefficient regular expression? We might need more too...
+	}
+	
+	foreach($summary_array as $summary_set) {
+		foreach($summary_set as $summary) {
+			if(trim($summary) != '') {
+				$summary_breakdown_array[] = $summary;
+			}
+		}
+	}
+	
+	// Sort the array in order of most frequent word
+	$summary_breakdown_array = array_count_values($summary_breakdown_array);
+	arsort($summary_breakdown_array);
+	$summary_breakdown_array = array_keys($summary_breakdown_array);
+			
+	foreach($summary_breakdown_array as $plaintext) {
+		$found = checkHash($query, $plaintext);
+		if($found) {
+			$found_location = "YAHOO_SUMMARY";
+			return $found;
+		} 
+	}
+	
+	// Still no match? Pull in the entire page and check the content of the text:
+	foreach($url_list as $url) {
+		// Get the web page
+		$html = get_web_page($url);
+		
+		if(isset($html['content'])) {
+			// Some content is too big for the filter--skip it for now
+			if(strlen($html['content']) > 100000) {
+				break;
+			}
+	
+			// Remove HTML tags
+			$filtered_content = strip_tags($html['content']);
+			
+			// Remove punctuation
+			$filtered_content = strip_punctuation($filtered_content);
+			
+			// Convert to array
+			$single_word_array = explode(" ",$filtered_content);
+			
+			// Filter out strings that probably aren't valid for hashing
+			foreach($single_word_array as $single_word) {
+				if(strlen($single_word) < 32) {
+					$filtered_word_array[] = $single_word; 
+				}
+			}
+	
+			// Sort the array in order of most frequent word
+			$filtered_word_array = array_count_values($filtered_word_array);
+			arsort($filtered_word_array);
+			$filtered_word_array = array_keys($filtered_word_array);
+			
+		}	
+		
+		// Run through the array and check the user-requested MD5 hash vs the words in the array
+		foreach($filtered_word_array as $plaintext) {
+			$found = checkHash($query, $plaintext);
+			if($found) {
+				$found_location = "YAHOO_PAGE";
+				return $found;
+			} 
+		}
+	}
+	
+}
+
+function searchGoogle($query) {
+	global $filter;
+	global $found_location;
+
+	$html = get_web_page("http://www.google.com/search?q=$query");
+	
+	// Remove the HTML tags (using Cal Henderson's libFilter class)
+	if(isset($html['content'])) {
+
+		// Some content is too big for the filter--skip it for now
+		if(strlen($html['content']) > 100000) {
+			break;
+		}
+
+		// Remove HTML tags
+		$filtered_content = strip_tags($html['content']);
+		
+		// Remove punctuation
+		$filtered_content = strip_punctuation($filtered_content);
+		
+		// Convert to array
+		$single_word_array = explode(" ",$filtered_content);
+		
+		// Filter out strings that probably aren't valid for hashing
+		foreach($single_word_array as $single_word) {
+			if(strlen($single_word) < 32) {
+				$filtered_word_array[] = $single_word; 
+			}
+		}
+
+		// Sort the array in order of most frequent word
+		$filtered_word_array = array_count_values($filtered_word_array);
+		arsort($filtered_word_array);
+		$filtered_word_array = array_keys($filtered_word_array);
+		
+	}	
+		
+	// Run through the array and check the user-requested MD5 hash vs the words in the array
+	foreach($filtered_word_array as $plaintext) {
+		$found = checkHash($query, $plaintext);
+		if($found) {
+			$found_location = "GOOGLE_SUMMARY";
+			return $found;
+		} 
+	}
+	
+}
+	
+function checkHash($query, $plaintext) {
+	$original = $plaintext;
+	/* Check the hash, including upper- and lower-case versions of plaintext, as well as quote-less */
+	if(md5($plaintext) == $query) {
+		return $plaintext;
+	} elseif(md5(strtolower($plaintext)) == $query) {
+		return strtolower($plaintext);
+	} elseif(md5(strtoupper($plaintext)) == $query) {
+		return strtoupper($plaintext);
+	} else {
+		return false;
+	}
+}
+	
+function get_web_page($url) {
+	/* Gets a webpage and saves it into an array for further processing */
+	$options = array( 'http' => array(
+		'user_agent'    => $_SERVER['HTTP_USER_AGENT'],    // run as a web browser rather than a spider
+		'max_redirects' => 10,          // stop after 10 redirects
+		'timeout'       => 120,         // timeout on response
+	) );
+	$context = stream_context_create( $options );
+	$page    = @file_get_contents( $url, false, $context );
+ 
+	$result  = array( );
+	if ( $page != false )
+		$result['content'] = $page;
+	else if ( !isset( $http_response_header ) )
+		return null;    // Bad url, timeout
+
+	// Save the header
+	$result['header'] = $http_response_header;
+
+	// Get the *last* HTTP status code
+	$nLines = count( $http_response_header );
+	for ( $i = $nLines-1; $i >= 0; $i-- )
+	{
+		$line = $http_response_header[$i];
+		if ( strncasecmp( "HTTP", $line, 4 ) == 0 )
+		{
+			$response = explode( ' ', $line );
+			$result['http_code'] = $response[1];
+			break;
+		}
+	}
+ 
+	return $result;
+}
+
+function strip_punctuation($text)
+{
+	/* strips punctuation from text, 
+		based on http://nadeausoftware.com/articles/2007/9/php_tip_how_strip_punctuation_characters_web_page 
+	*/
+    $urlbrackets    = '\[\]\(\)';
+    $urlspacebefore = ':;\'_\*%@&?!' . $urlbrackets;
+    $urlspaceafter  = '\.,:;\'\-_\*@&\/\\\\\?!#' . $urlbrackets;
+    $urlall         = '\.,:;\'\-_\*%@&\/\\\\\?!#' . $urlbrackets;
+ 
+    $specialquotes  = '\'"\*<>';
+ 
+    $fullstop       = '\x{002E}\x{FE52}\x{FF0E}';
+    $comma          = '\x{002C}\x{FE50}\x{FF0C}';
+    $arabsep        = '\x{066B}\x{066C}';
+    $numseparators  = $fullstop . $comma . $arabsep;
+ 
+    $numbersign     = '\x{0023}\x{FE5F}\x{FF03}';
+    $percent        = '\x{066A}\x{0025}\x{066A}\x{FE6A}\x{FF05}\x{2030}\x{2031}';
+    $prime          = '\x{2032}\x{2033}\x{2034}\x{2057}';
+    $nummodifiers   = $numbersign . $percent . $prime;
+ 
+    return preg_replace(
+        array(
+        // Remove separator, control, formatting, surrogate, open/close quotes.
+            '/[\p{Z}\p{Cc}\p{Cf}\p{Cs}\p{Pi}\p{Pf}]/u',
+        // Remove other punctuation except special cases
+            '/\p{Po}(?<![' . $specialquotes .
+                $numseparators . $urlall . $nummodifiers . '])/u',
+        // Remove non-URL open/close brackets, except URL brackets.
+            '/[\p{Ps}\p{Pe}](?<![' . $urlbrackets . '])/u',
+        // Remove special quotes, dashes, connectors, number separators, and URL characters followed by a space
+            '/[' . $specialquotes . $numseparators . $urlspaceafter .
+                '\p{Pd}\p{Pc}]+((?= )|$)/u',
+        // Remove special quotes, connectors, and URL characters preceded by a space
+            '/((?<= )|^)[' . $specialquotes . $urlspacebefore . '\p{Pc}]+/u',
+        // Remove dashes preceded by a space, but not followed by a number
+            '/((?<= )|^)\p{Pd}+(?![\p{N}\p{Sc}])/u',
+        // Remove consecutive spaces
+            '/ +/',
+        ),
+        ' ',
+        $text );
+}
+
+
+// This is where the magic happens. First check for form data...
+if(isset($_REQUEST['query']) && trim($_REQUEST['query']) != '') {
+
+	#$query = filter_input(INPUT_POST, 'query'); 	// Clean the request for more security... doesn't work in all PHP setups so we disable it here
+	$query = $_REQUEST['query'];
+
+	// Search Google
+	if(!$found) {
+		$found = searchGoogle($query);
+	}
+
+	// Search Yahoo
+	if(!$found) {
+		$found = searchYahoo($query);
+	}
+	
+	$time_end = microtime(true);
+	$time = $time_end - $time_start;
+}
+?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"><html>
+	<head>
+		<title>Let's Crack Some MD5</title>
+		<style> 
+		<!--
+		li {
+			list-style-position: inside;
+			margin:3px;
+			}
+		-->
+		</style>
+	</head>
+	<body style="margin: 0px; padding: 0px; font-family: arial; font-size: 12px;">
+		<div style="border-bottom: 1px solid #aaa; background-color:#e6e6e6; padding: 5px; text-align: center;">
+		<?	if($query) { 
+				if($found) {
+					echo $query . " => <strong>" . $found . "</strong>";
+				} else {
+					echo "Unable to crack via search engines";
+				}
+			} else {
+				echo "Light-force MD5 crack using search engines";
+			} 
+		?>
+		</div>
+		
+		<div id="hash_form" style="margin:5px; padding:5px;">
+			<form action="<?= $_SERVER['PHP_SELF'] ?>" method="post">
+				Please enter an MD5 hash you wish to crack:
+				<input type="text" name="query" size="32" maxlength="32">
+				<input type="submit" name=" Crack ">
+			</form>
+		</div>
+		
+		<div id="hash_response" style="margin:5px; padding:5px;">
+			<? if($query) { ?>
+					<strong>Result:</strong><br>
+			<?
+				if($found) {
+					// Matched the key
+					echo "<ul>Congratulations!";
+					echo "<li>The hash <strong>$query</strong> has been deciphered to: <strong>$found</strong></li>";
+					switch($found_location) {
+						case "YAHOO_URL":
+							echo "<li>The plain-text was found in a Yahoo URL</li>";
+						break;
+						
+						case "YAHOO_SUMMARY":
+							echo "<li>The plain-text was found in Yahoo's summary of a page</li>";
+						break;
+						
+						case "YAHOO_PAGE":
+							echo "<li>The plain-text was found in a page via Yahoo</li>";
+						break;
+						
+						case "GOOGLE_SUMMARY":
+							echo "<li>The plain-text was found in Google's summary of a page</li>";
+						break;
+						
+						case "DATABASE":
+							echo "<li>This plain-text had already been found via search engine</li>";
+						break;
+					}
+						echo "<li>Found in " . $time . " seconds</li>"; 
+					echo "</ul>";
+				} else {
+					echo "<ul>Sorry!";
+					echo "<li>We couldn't crack the hash with a search engine.</li>";
+					echo "<li>Hacked for " . $time . " seconds.</li>";
+					echo "</ul>";  
+				}
+			}
+			?>
+		</div>
+	</body>
+	<? 
+		include('../analytics.php') 
+	?>
+</html>
