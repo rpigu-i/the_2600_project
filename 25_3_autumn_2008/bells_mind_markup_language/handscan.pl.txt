@@ -1,0 +1,272 @@
+#!/usr/bin/perl -w
+
+# handscan.pl - by dual
+#
+# Generates number lists for handscanning
+# (see also http://www.handscan.net)
+#########################################
+
+
+use strict;
+use List::Util 'shuffle';
+
+
+#***************************************************************************
+#
+# Main program
+#
+#***************************************************************************
+
+# Declare
+my $type;
+my @tmparray;
+my $random = 0;
+my ($npa, $nxx, $ext);
+my ($firsttwo, $firstone);
+my ($temp1, $temp2, $temp3);
+my $NPA_ERR_MSG = "The Numbering Plan Area (NPA), or area code, must adhere to the North
+American Numbering Plan Administration (NANPA) guidelines. Please see
+http://www.nanpa.com/area_codes/index.html for more information.
+";
+my $NXX_ERR_MSG = "The NXX, or exchange, must adhere to the Alliance for Telecommunications
+Industry Solutions (ATIS) Industry Numbering Committee (INC) guidelines.
+Please see http://www.atis.org/inc/Docs/finaldocs/CoCAG-Final-01-18-08.doc
+for more information.
+";
+my $STD_ERR_MSG = "handscan.pl - Generates scan lists of ten-digit, North American
+	      telephone numbers in the form of NPA-NXX-XXXX
+
+Usage: handscan -a <NXX> <XXXX>
+       handscan -e <NPA> <XXXX>
+       handscan -h <NPA> <NXX> <XX>
+       handscan -t <NPA> <NXX> <X>
+       handscan -u <NPA> <NXX>
+
+-a => Area code scan
+-e => Exchange scan
+-h => One hundred scan
+-t => One thousand scan
+-u => Ultimate scan, i.e. ten thousand scan
+
+Use -r before the scan type to randomize your scan, e.g. handscan -r -u 212 209.
+";
+my $OH_ERR_MSG = "Enter the first two digits of the extension. For example, enter \"99\"
+to scan 9900 - 9999.
+";
+my $OT_ERR_MSG = "Enter the first digit of the extension. For example, enter \"9\" to
+scan 9000 - 9999.
+";
+
+# Usage if no args
+error($STD_ERR_MSG) unless @ARGV;
+
+# Determine if random scan
+if ($ARGV[0] =~ /^-r$/) {
+	shift;
+	$random = 1;
+	($type = shift) ? getncheck() : error($STD_ERR_MSG);
+}
+else {
+	$type = shift;
+	getncheck();
+}
+
+# Get and check arg(s) and call
+# the appropriate function
+sub getncheck {
+	if ($type =~ /^-a$/) {
+		error($STD_ERR_MSG) unless defined( $temp1 = $ARGV[0] );
+		error($STD_ERR_MSG) unless defined( $temp2 = $ARGV[1] );
+		error($STD_ERR_MSG) unless ($temp1 =~ /^(\d{3})$/);
+        	$nxx = $1;
+		error($NXX_ERR_MSG) if AREA_ERR($nxx);
+		error($STD_ERR_MSG) unless ($temp2 =~ /^(\d{4})$/);
+        	$ext = $1;
+		area();
+	}
+	elsif ($type =~ /^-e$/) {
+		error($STD_ERR_MSG) unless defined( $temp1 = $ARGV[0] );
+		error($STD_ERR_MSG) unless defined( $temp2 = $ARGV[1] );
+		error($STD_ERR_MSG) unless ($temp1 =~ /^(\d{3})$/);
+		$npa = $1;
+		error($NPA_ERR_MSG) if NPA_ERR($npa);
+		error($STD_ERR_MSG) unless ($temp2 =~ /^(\d{4})$/);
+		$ext = $1;
+		exchange();
+	}
+	elsif ($type =~ /^-h$/) {
+		error($STD_ERR_MSG) unless defined( $temp1 = $ARGV[0] );
+		error($STD_ERR_MSG) unless defined( $temp2 = $ARGV[1] );
+		error($STD_ERR_MSG) unless defined( $temp3 = $ARGV[2] );
+		error($STD_ERR_MSG) unless ($temp1 =~ /^(\d{3})$/);
+		$npa = $1;
+		error($NPA_ERR_MSG) if NPA_ERR($npa);
+		error($STD_ERR_MSG) unless ($temp2 =~ /^(\d{3})$/);
+		$nxx = $1;
+		error($NXX_ERR_MSG) if NXX_ERR($nxx, $npa);
+		error($OH_ERR_MSG) unless ($temp3 =~ /^(\d{2})$/);
+		$firsttwo = $1;
+		hundred();
+	}
+	elsif ($type =~ /^-t$/) {
+		error($STD_ERR_MSG) unless defined( $temp1 = $ARGV[0] );
+		error($STD_ERR_MSG) unless defined( $temp2 = $ARGV[1] );
+		error($STD_ERR_MSG) unless defined( $temp3 = $ARGV[2] );
+		error($STD_ERR_MSG) unless ($temp1 =~ /^(\d{3})$/);
+		$npa = $1;
+		error($NPA_ERR_MSG) if NPA_ERR($npa);
+		error($STD_ERR_MSG) unless ($temp2 =~ /^(\d{3})$/);
+		$nxx = $1;
+		error($NXX_ERR_MSG) if NXX_ERR($nxx, $npa);
+		error($OT_ERR_MSG) unless ($temp3 =~ /^(\d{1})$/);
+		$firstone = $1;
+		thousand();
+	}
+	elsif ($type =~ /^-u$/) {
+		error($STD_ERR_MSG) unless defined( $temp1 = $ARGV[0] );
+		error($STD_ERR_MSG) unless defined( $temp2 = $ARGV[1] );
+		error($STD_ERR_MSG) unless ($temp1 =~ /^(\d{3})$/);
+		$npa = $1;
+		error($NPA_ERR_MSG) if NPA_ERR($npa);
+		error($STD_ERR_MSG) unless ($temp2 =~ /^(\d{3})$/);
+		$nxx = $1;
+		error($NXX_ERR_MSG) if NXX_ERR($nxx, $npa);
+		ultimate();
+	}
+	else  { error($STD_ERR_MSG); }
+}
+
+
+#***************************************************************************
+#
+# Error functions
+#
+#***************************************************************************
+
+# Print error message
+sub error {
+	if (my $err_msg = shift) {
+		print $err_msg;
+	}
+	exit 1;
+}
+
+# Handle NPA errors
+sub NPA_ERR {
+	if ($_[0] < 200 or $_[0] =~ /[2-79](\d)\1|
+				     8([2-59])\1|
+				     \d11|
+				     \d9\d|
+				     37\d|
+				     96\d/x) {
+		return 1;
+	}
+	else { return 0; }
+}
+
+# Handle NXX errors
+sub NXX_ERR {
+	if ($_[0] < 200) { return 1; }
+	elsif ($_[0] =~ /\d11|$_[1]|555|700|95(0|8|9)/ and $npa !~ /8(00|66|77|88)/) { return 1; }
+	else { return 0; }
+}
+
+# Handle area code scan NXX errors
+sub AREA_ERR {
+        if ($_[0] < 200) { return 1; }
+        elsif ($_[0] =~ /\d11|555|700|95(0|8|9)/) { return 1; }
+        else { return 0; }
+}
+
+
+#***************************************************************************
+#
+# Output functions
+#
+#***************************************************************************
+
+# Randomize scan
+sub randomize {
+	if ($random) {
+                my @ranarray = shuffle(@tmparray);
+                print @ranarray;
+        }
+        else { print @tmparray; }
+}
+
+# Area code scan
+sub area {
+	my @area_codes = qw(
+201 202 203 204 205 206 207 208 209 210 212 213 214 215 216 217 218 219 224 225 226 228 229 231 234 
+239 240 242 246 248 250 251 252 253 254 256 260 262 264 267 268 269 270 276 281 284 289 301 302 303 
+304 305 306 307 308 309 310 312 313 314 315 316 317 318 319 320 321 323 325 330 331 334 336 337 339 
+340 345 347 351 352 360 361 386 401 402 403 404 405 406 407 408 409 410 412 413 414 415 416 417 418 
+419 423 424 425 430 432 434 435 438 440 441 443 450 456 469 473 478 479 480 484 501 502 503 504 505 
+506 507 508 509 510 512 513 514 515 516 517 518 519 520 530 540 541 551 559 561 562 563 567 570 571 
+573 574 575 580 581 585 586 587 601 602 603 604 605 606 607 608 609 610 612 613 614 615 616 617 618 
+619 620 623 626 630 631 636 641 646 647 649 650 651 657 660 661 662 664 670 671 678 682 684 701 702 
+703 704 705 706 707 708 709 710 712 713 714 715 716 717 718 719 720 724 727 731 732 734 740 754 757 
+758 760 762 763 765 767 769 770 772 773 774 775 778 779 780 781 784 785 786 787 800 801 802 803 804 
+805 806 807 808 809 810 812 813 814 815 816 817 818 819 828 829 830 831 832 843 845 847 848 850 856 
+857 858 859 860 862 863 864 865 866 867 868 869 870 876 877 878 888 901 902 903 904 905 906 907 908 
+909 910 912 913 914 915 916 917 918 919 920 925 928 931 936 937 939 940 941 947 949 951 952 954 956 
+970 971 972 973 978 979 980 985 989
+);
+	foreach my $code (@area_codes) {	
+		push @tmparray, "$code-$nxx-$ext - \n" unless ($code =~ /$nxx/);
+	}
+	randomize();
+	exit 0;
+}
+
+# Exchange scan
+sub exchange {
+	my $i = 200;
+	while ($i < 1000) {
+		if ($i =~ /\d11|$npa|555|700|95(0|8|9)/ and $npa !~ /8(00|66|77|88)/) {
+			$i++;
+			next;
+		}
+		my $j = sprintf("%03d", $i);
+		push @tmparray, "$npa-$i-$ext - \n";
+		$i++;
+	}
+	randomize();
+	exit 0;
+}
+
+# One hundred scan
+sub hundred {
+	my $i = 0;
+	while ($i < 100) {
+		my $j = sprintf("%02d", $i);
+		push @tmparray, "$npa-$nxx-$firsttwo$j - \n";
+		$i++;
+	}
+	randomize();
+	exit 0;
+}
+
+# One thousand scan
+sub thousand {
+        my $i = 0;
+        while ($i < 1000) {
+                my $j = sprintf("%03d", $i);
+                push @tmparray, "$npa-$nxx-$firstone$j - \n";
+                $i++;
+        }
+	randomize();
+	exit 0;
+}
+
+# Ultimate scan
+sub ultimate {
+	my $i = 0;
+	while ($i < 10000) {
+		my $j = sprintf("%04d", $i);
+		push @tmparray, "$npa-$nxx-$j - \n";
+		$i++;
+	}
+	randomize();
+	exit 0;
+}

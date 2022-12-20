@@ -1,0 +1,128 @@
+This set of scripts makes up the TOR analyzer that
+I've written to give some basic statistics on a TOR
+network.  It is not and should not be expected to be a
+real-time analysis.  There is no way for me to provide
+that analysis given the limited resources to the
+Internet registries, limited bandwidth, etc.  Only
+large organizations and government entities can do
+that.  But my TOR analyzer will give you some idea as
+to who is running a TOR node, what country they're
+operating in, etc.  I am assuming the reader has
+knowledge in setting  up a Mysql database, Unix/Linux
+shell scripting, and general systems administration. 
+These scripts are not intended for people who are
+first starting out (newbies).  Also, these scripts are
+meant to run in a Unix/Linux-type environment.  
+ 
+After you have downloaded the scripts, you should
+first set up the database.  I use Mysql because it is
+readily available on most Linux disbributions.  Once
+you have the database started you should log into the
+Mysql admin console, usually by issuing a command such
+as 'mysql -uroot'.  Here are the commands that I used
+to create the TOR database: 
+ 
+mysql>create database tor; 
+ 
+mysql>use tor; 
+ 
+mysql>create table tor_ips (IP VARCHAR(20) NOT
+NULL,PRIMARY KEY(IP),TOR_NAME
+VARCHAR(100),DATE_UPDATED DATETIME); 
+ 
+mysql>create table registry (IP VARCHAR(20) NOT
+NULL,PRIMARY KEY(IP),REG_NAME VARCHAR(100),DESCR
+TEXT,COUNTRY VARCHAR(2),REGISTRY
+VARCHAR(10),DATE_ENTERED DATETIME,DATE_UPDATED
+DATETIME); 
+ 
+mysql>grant all privileges on tor.* to
+'tor'@'localhost' identified by 'torminator' with
+grant option; 
+ 
+In the above example I use the user 'tor' and the
+password 'torminator' to set access on that database. 
+You can use the stats.pl script to test if you're
+connecting properly.  It should just return 0 stats. 
+ 
+Once you have the database up and running there are
+two files you need to edit.  The first one is the
+start_tor_analyzer.sh script.  In that file you'll
+need to set the tor executable path and other
+settings.  Assuming you have systems administration
+experience you should have no problems setting the
+values in that file.  They're mostly self-explanatory.
+
+ 
+The second file is called "variables.pl"  Although it
+has a .pl extension it is nothing more than a file
+that sets the various variables needed by the scripts,
+such as the database,mysql machine IP,the user and
+password to access that database.  Also there are
+three very important variables that must be set
+correctly for the analyzer to work.  The first one is
+called "TORCACHEFILE". This is the name of the cache
+file that TOR uses to store the nodes that will be
+analyzed.  This file has a different name depending on
+the version of TOR you're using.  In my experience it
+is usually called "cached-routers" or
+"cached-descriptors".  The second variable is called
+"USERHOMEDIR" and should be self-explanatory.  This is
+the home directory of whatever user you'll be running
+TOR.  That is because when TOR first starts up it
+creates a .tor directory under that home directory. 
+Note that there is no ending '/' for that variable. 
+The third variable is called "SCRIPTWORKINGDIR" and
+this is the full path directory where the analyzer
+scripts are located.  This is also the directory where
+tmp files are created.  Note that there is no ending
+'/' for this variable as well.  By the way, if you're
+going to run the start_tor_analyzer.sh script in cron,
+you will need to copy the variables.pl file to the
+home directory of whatever user you'll be running it
+under, or you'll have to edit at the top of each of
+the perl scripts to reflect the full, absolute path
+name to the variables.pl file.  Otherwise, the run
+will fail in cron.   
+ 
+Once all of this is set up you should be able to run
+the analyzer by running this command:
+./start_tor_analyzer.sh  Also, if you don't want to
+use that script you can just start the analyzer by
+running this command: ./tor_analyzer.pl, but make sure
+TOR is running before running the command.  My
+suggestion is to run the script manually for the first
+time since it usually takes anywhere from 1-4 hours to
+complete a fresh run.  After that the IP is logged to
+the registry table for future reference, should that
+IP show up again in the system.  This makes things run
+much faster after an initial run.  My experience shows
+that subsequent runs take about 5-20 minutes, but this
+is highly dependent on the number of TOR nodes at run
+time. 
+ 
+Most of the scripts are used by tor_analyzer.pl and
+were not meant to be run by themselves.  However, two
+scripts are provided for your convenience to query the
+database.  The first one is called query.pl.  It takes
+a properly formatted SQL command as input.  Below is
+an example of running the script from the command
+line: 
+ 
+localhost$ ./query.pl "Select
+tor_ips.IP,tor_ips.TOR_NAME,registry.REG_NAME,registry.DESCR,registry.REGISTRY,registry.COUNTRY
+from tor_ips,registry where registry.COUNTRY='US' and
+registry.IP=tor_ips.IP" 
+ 
+Just hit return and it will return all the records in
+which IPs are listed for the US.  Please note this
+document assumes the reader has familiarity with SQL. 
+The second script provided is called stats.pl.  You
+run it by itself and it outputs some rudimentary
+statistics on several countries and the registries. 
+Edit the script as you like.  Don't feel slighted if
+your country is not listed in the stats.  I just
+picked the ones that I see more often than others. 
+For some reason Germany consistently has the most TOR
+nodes and by a large margin.  I'm not sure why. 
+Anyway, have fun!

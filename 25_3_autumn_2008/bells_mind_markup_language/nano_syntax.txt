@@ -1,0 +1,8 @@
+# Hand scan syntax highlighting
+syntax "handscan" "\.scan\.txt$"
+color red "^[0-9]{3}"
+color yellow "-[0-9]{3}-"
+color cyan "[0-9]{4}\s-\s"
+color green "(CBCA(D|E)|DISCO|(CBR|NA)YCA|NIS|SIT|TTY|VM)"
+color magenta "(busy|fax|HELO|reorder|ring out)$"
+color brightyellow "(ANAC|carrier|DTMF|extender|tones)"

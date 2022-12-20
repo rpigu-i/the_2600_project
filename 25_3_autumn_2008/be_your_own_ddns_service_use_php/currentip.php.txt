@@ -1,0 +1,12 @@
+<?php
+$fp = @fsockopen ($addy, $port, $errno, $errstr, $timeout);
+// $addy is your current IP, $port is the port your client is using,
+// $timeout is how long to wait (2 is dandy)
+if ($fp) {
+echo "Connection good!"
+@fclose($fp);
+}
+else {
+echo "Connection down."
+}
+?>

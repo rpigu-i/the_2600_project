@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AllowFileAccessOutsideOfWidget</key>
+	<true/>
+	<key>AllowNetworkAccess</key>
+	<true/>
+	<key>AllowSystem</key>
+	<true/>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleDisplayName</key>
+	<string>BadWidget</string>
+	<key>CFBundleIdentifier</key>
+	<string>org.geisterstunde.widget.BadWidget</string>
+	<key>CFBundleName</key>
+	<string>BadWidget</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.1</string>
+	<key>CFBundleVersion</key>
+	<string>0.1</string>
+	<key>CloseBoxInsetX</key>
+	<integer>13</integer>
+	<key>CloseBoxInsetY</key>
+	<integer>14</integer>
+	<key>Height</key>
+	<integer>72</integer>
+	<key>MainHTML</key>
+	<string>BadWidget.html</string>
+	<key>Width</key>
+	<integer>230</integer>
+</dict>
+</plist>

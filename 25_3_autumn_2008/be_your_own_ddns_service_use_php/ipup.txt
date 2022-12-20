@@ -1,0 +1,9 @@
+open www.your-domain.com
+user-name
+password
+quote CWD /your-domain.com/new-directory
+quote TYPE A
+quote PASV
+put C:\ip.txt
+close
+quit
