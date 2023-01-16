@@ -6,7 +6,7 @@ Code in this repository comes from the Autumn 2008 edition of #2600.
 
 The code was available in the magazine, or via the website at https://www.2600.com/code/253/
 
-A back issue of the magazine can be purchased from the 2600 magazine website at https://store.2600.com/collections/2000-2009/products/winter-2008-2009
+A back issue of the magazine can be purchased from the 2600 magazine website at https://store.2600.com/collections/2000-2009/products/autumn-2008
 
 ## Bell's Mind Markup Language
 
