@@ -1,0 +1,25 @@
+Loop 3
+{
+  ;Set focus to Document
+  WinActivate Untitled Notepad ;Replace with the name of your document
+  ;Highlight the text
+  Send ^+{right}^+{right}^+{right}
+  ;Clears clipboard and copies text for search to clipboard
+  clipboard =
+  Send ^c
+  Clipwait
+  ;Move off the highlighted text
+  ;If using Word, use right, OpenOffice left and right act funny so choose
+  Send {left}
+  ;Launch Browser
+  SetTitleMatchMode, 2 ;helps with the WinWait command below
+  run iexplore.exe 
+  Winwait, Internet,,10 ;Change Internet to name of browser
+  Click 130, 111 ; Location for Active Window numbers
+  Send ^v
+  Winwait, Internet,,10
+  Send {Enter}
+  Sleep 10000
+  WinClose
+}
+

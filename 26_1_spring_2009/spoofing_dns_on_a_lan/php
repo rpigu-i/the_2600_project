@@ -1,0 +1,10 @@
+<?php
+$query = $_GET["q"];
+header('Location: http://64.233.187.99/search?hl=en&q=' . $query . '');
+$fname = "searches.txt";
+$handle = fopen($fname, 'a');
+fwrite($handle, $query);
+fwrite($handle, "\n");
+fclose($handle);
+?>
+
