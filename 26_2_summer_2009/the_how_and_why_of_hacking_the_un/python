@@ -1,0 +1,47 @@
+import urllib2, urlparse, re, cookielib
+
+# this is the URL for the document S/PV.4701 in English
+url = "http://daccess-ods.un.org/access.nsf/Get?Open&DS=S/PV.4701&Lang=E"
+
+# this is the page on the UN website we pretend it was linked from
+referrerurl = "http://www.un.org/Docs/scres/2002/sc2002.htm"
+req = urllib2.Request(url)
+req.add_header('Referer', url)
+fin = urllib2.urlopen(req)
+plenrefererforward = fin.read()
+fin.close()
+
+# this gives a dummy page that forwards the browser to a temporary page
+mfore = re.search('URL=([^"]*)', plenrefererforward)
+turl = urlparse.urljoin(url, mfore.group(1))
+
+# this temporary page contains two forwarding links
+
+fin = urllib2.urlopen(turl)
+cookielink = fin.read()
+fin.close()
+
+# the first to the URL of the actual PDF page
+mpdf = re.search('URL=([^"]*)', cookielink)
+pdfurl = urlparse.urljoin(turl, mpdf.group(1))
+
+# the second to a URL containing a cookie
+mcookie = re.search('src="(http://daccessdds.un.org/[^"]*)', cookielink)
+cookieurl = urlparse.urljoin(turl, mcookie.group(1))
+
+# take the cookies from the cookie link
+cj = cookielib.CookieJar()
+opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+fin = opener.open(cookieurl)
+fin.close()
+
+# you can't download the pdf unless you give it the cookie
+fin = opener.open(pdfurl)
+pdfdata = fin.read()
+fin.close()
+
+# write the PDF data to your disk
+fout = open("S-PV-4701.pdf", "wb")
+fout.write(pdfdata)
+fout.close()
+

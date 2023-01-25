@@ -1,0 +1,2 @@
+echo -e '\n!0 enable channel channel,networks' | nc localhost 2501 | awk 'BEGIN { CHN = 0; }; /CHANNEL:/ { chnum[CHN]=$2; chval[CHN]=$3; CHN=CHN+1; }; /TIME/ { if (CHN != 0) { printf("["); for (x = 0; x < CHN; x++) { printf("{\"id\":%s,\"value\":%s}", chnum[x], chval[x]); if (x < (CHN-1)) printf(",") } printf("]\n"); CHN=0; fflush(""); } };' | while read line; do echo "$line" > channel.json; done
+

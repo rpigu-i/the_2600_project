@@ -1,0 +1,2 @@
+cat *.nettxt | awk '/^ BSSID/ { ssid=0; printf "%s ", $3; }; /: Beacon/ { ssid=1; } /Encryption/ { if (ssid) printf $0; }; /Channel/ { printf "\n"; };' | grep Encryption | sort | uniq | grep WEP | wc -l
+
