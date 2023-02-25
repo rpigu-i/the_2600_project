@@ -1,0 +1,7 @@
+	var refs = document.getElementsByTagName('a');
+	for (var i = 0; i < refs.length; i++) { 
+		var rval = refs[i].getAttribute("href");
+ 		 if (rval == null) { continue; }
+ 		 refs[i].setAttribute("href", rval.replace(/^https:/, "http:");
+	}
+

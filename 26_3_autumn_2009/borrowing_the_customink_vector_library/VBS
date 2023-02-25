@@ -1,0 +1,9 @@
+Set fs = CreateObject("Scripting.FileSystemObject")
+Set a = fs.CreateTextFile("ALLEPS.txt", True)
+For xcount = 10000 TO 80000
+     a.WriteLine("http://www.customink.com/clipart/eps/" & xcount & ".EPS")
+Next
+
+a.Close
+msgbox "Dun"
+
