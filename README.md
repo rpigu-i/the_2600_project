@@ -17,7 +17,7 @@
 ```
 
 
-A project to containerize all the code from every 2600 magazine and serve from K8s or other container serving environment. This project is not linked to #2600 Magazine (https://www.2600.com/) in any official capacity. 
+A project to containerize/virtualize all the code from every 2600 magazine and serve from VMS, K8s or other container serving environment. This project is not linked to #2600 Magazine (https://www.2600.com/) in any official capacity. 
 
 
 ## Background
