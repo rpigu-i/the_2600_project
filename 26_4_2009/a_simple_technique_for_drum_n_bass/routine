@@ -1,0 +1,22 @@
+#define SET_BIT(x,y) 	(x|(1<<y))
+#define TEST_BIT(x,y)	((x>>y)&1)
+
+int mod_pos(int in) {
+ int pool, i, out;
+ pool =0;
+ out = in;
+
+ /* Get half the input */
+ for(i=0;i<16;i++) 
+  if(mods[i] == 1)
+   if(TEST_BIT(out,1) == 1)
+    pool = 1;
+
+ /* Compute and store where appropriate */
+ for(i=0;i<16;i++)
+  if(mods[i] == 1 && pool == 1)
+   out = SET_BIT(out,i);
+
+ return out;  
+}
+

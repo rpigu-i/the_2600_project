@@ -1,0 +1,17 @@
+// If socket programming is not built in, then don't forget to import the needed libraries 
+// We need to identify the target. This can be any ip, but I will use the local address for this example 
+
+ipAddress = "127.0.0.1";  
+
+// Now let's try to connect to ports on the ip address with a for loop 
+
+for (port = 1; port < 1025; port++){
+ 	try {
+ 		socket = new Socket(ipAddress, port);
+ 		Write "port " + port  " on " + ipAddress + " is open";
+ 	} // If there is a connection, then it will let us know the port is open
+ 	catch(exception) {
+ 		Write "port " + port + " on " +ipAddress + " is closed";
+ 	} // If the connect fails, then the port is closed. 
+} 
+

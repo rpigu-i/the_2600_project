@@ -1,0 +1,12 @@
+int q;
+q = 0;
+if(bend_up == 1)
+ speed *= CONSTANT;
+else 
+ q++;
+if(bend_down == 1) 
+ speed /= CONSTANT;
+else
+ q++;
+if(q == 2) speed = 1.0f;
+

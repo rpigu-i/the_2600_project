@@ -1,0 +1,7 @@
+j_int = (int)j;
+j_int&=0xffff;
+if((j_int - pos2) > (0xffff/NUMBER_OF_BEATS_IN_SAMPLE) )
+ buffer[i] = SILENCE /* span spans over one beat */
+else
+ buffer[i] = sample[j_int];  /*sample is our sample data */
+
