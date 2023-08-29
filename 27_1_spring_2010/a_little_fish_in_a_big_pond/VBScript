@@ -1,0 +1,16 @@
+Const ForReading = 1 
+Const ForWriting = 2  
+
+Set objFSO = CreateObject("Scripting.FileSystemObject") 
+Set objInFile = objFSO.OpenTextFile("C:\BT4\wordlist.txt", ForReading) 
+Set objOutFile = objFSO.OpenTextFile("C:\BT4\WPAKey.txt", ForWriting)  
+
+Do Until objInFile.AtEndOfStream
+     strLine = objInFile.ReadLine
+     strContents = strLine & "8686"
+     objOutFile.WriteLine strContents 
+Loop  
+
+objInFile.Close 
+objOutFile.Close 
+
