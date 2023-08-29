@@ -1,0 +1,8 @@
+my $Grab = <STDIN>;
+unless($Grab =~/yes/i)
+{
+	print "Your system will now reboot. Please remove your disc.\n";
+	system("eject /dev/$CD_Dev");
+	sleep(7);
+	system("shutdown -r now");
+}

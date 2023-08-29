@@ -1,0 +1,21 @@
+# db.localroot
+# this file should be located in /var/named/
+
+# Time To Live - how long the record should be considered valid
+$TTL 7200
+
+# This block declares hostname.example.com the State of Authority for this domain and provides an admin email address (note the use of "." instead of "@").
+@ IN SOA hostname.example.com admin.example.com (
+	1 ; Serial
+	3600 ; Refresh every 1 hours
+	1800 ; Retry every 30 minutes
+	604800 ; Expire after 7 days
+	1 ) ; TTL 1 second
+
+# This line provides the IP address of the nameserver for this domain, which in this case is the same machine.
+	IN NS 192.168.50.1
+
+# Here we define the basic A ("machine") record and a wild card entry which directs all lookups to the same A record address.
+	IN A 192.168.50.1
+*	IN A 192.168.50.1
+

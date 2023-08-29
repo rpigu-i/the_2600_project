@@ -1,0 +1,8 @@
+if($After_Completion =~/reboot/i)
+{
+	system(clear);
+	print "\n\nSystem restore completed successfully! Your computer will now restart. Please remove your disc.\n";
+	system("eject /dev/$CD_Dev");
+	sleep(7);
+	system("shutdown -r now");
+}
