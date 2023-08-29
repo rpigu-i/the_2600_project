@@ -1,0 +1,2 @@
+	addr = strncpy(addr, argv[2], 1023);
+

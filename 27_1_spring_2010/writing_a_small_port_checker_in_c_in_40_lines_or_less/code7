@@ -1,0 +1,1 @@
+    address.sin_port = htons(port);               /* translate int2port num */

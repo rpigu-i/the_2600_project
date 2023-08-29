@@ -1,0 +1,6 @@
+    sock = socket(AF_INET, SOCK_STREAM, 0);
+    if(connect(sock,(struct sockaddr *)&address,sizeof(address)) == 0)
+        printf("%i is open on %s\n", port, argv[2]);
+
+    if (errno == 113) fprintf(stderr, "F*^k - no route to host\n");
+

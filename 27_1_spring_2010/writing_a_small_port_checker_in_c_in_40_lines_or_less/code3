@@ -1,0 +1,6 @@
+    port = atoi(argv[1]);
+    addr = strncpy(addr, argv[2], 1023);
+    bzero((char *)&address, sizeof(address)); /* init addr struct */
+    address.sin_addr.s_addr = inet_addr(addr); /* assign the address */
+    address.sin_port = htons(port);               /* translate int2port num */
+

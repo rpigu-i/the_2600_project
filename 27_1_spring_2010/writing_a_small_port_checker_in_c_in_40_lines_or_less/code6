@@ -1,0 +1,3 @@
+    bzero((char *)&address, sizeof(address)); /* init addr struct */
+    address.sin_addr.s_addr = inet_addr(addr); /* assign the address */
+

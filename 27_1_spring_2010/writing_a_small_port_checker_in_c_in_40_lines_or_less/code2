@@ -1,0 +1,6 @@
+int main(int argc, char **argv)
+{
+    u_short port;               /* user specified port number */
+    char addr[1023];            /* will be a copy of address entered by u */
+    struct sockaddr_in address; /* the libc network address data structure */
+    short int sock = -1;        /* file descriptor for the network socket */
