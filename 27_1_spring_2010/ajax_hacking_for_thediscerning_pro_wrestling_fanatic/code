@@ -1,0 +1,6 @@
+<script type="text/javascript"> abp = false; 
+</script> 
+<script type="text/javascript" src="include/adframe.js"> 
+</script> 
+<script language=javascript>document.write(unescape('[A whole bunch of double and triple-escaped JS code, omitted for publishing]')
+</script>
