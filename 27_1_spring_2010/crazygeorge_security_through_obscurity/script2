@@ -1,0 +1,19 @@
+<p>Take a guess. Format is an 8-digit yyyymmdd date. For example, January 3, 1965 would be 19650103.
+Then click "Submit", don't hit the Return key.</p>
+<form name="login">
+<table border="2" cellpadding="3">
+<tr><td colspan="2"><b>Date of Birth</b>
+</td></tr>
+<tr><td><input name="pass" type="password"></td>
+<td><input type="button" value="Submit" onClick="password(form.pass.value)"></td>
+</tr>
+</table>
+<table border=2 cellpadding="3">
+<tr><td colspan="2"><b>Date of Death</b>
+</td></tr>
+<tr><td><input name="pass2" type="password"></td>
+<td><input type="button" value="Submit" onClick="password(form.pass2.value)"></td>
+</td>
+</table>
+</form>
+

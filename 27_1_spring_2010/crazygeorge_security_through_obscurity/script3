@@ -1,0 +1,13 @@
+<html>
+<head>
+   <script language="javascript" type="text/javascript">
+   function password (pass)
+   {
+     if (pass != '')
+     {
+       location.href="/"+pass+"/index.html";
+     }
+   }
+   </script>
+</head>
+...
