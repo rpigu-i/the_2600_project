@@ -1,0 +1,9 @@
+	<bbox>
+		<checkbox id="fsfx-toolbar-custom-checkbox"
+			label="Use Custom Location" />
+		<label value="Latitude:"/>
+		<textbox id="fsfx-toolbar-custom-lat" width="60px" />
+		<label value="Longitude:"/>
+		<textbox id="fsfx-toolbar-custom-long" width="60px" />
+	</bbox>
+

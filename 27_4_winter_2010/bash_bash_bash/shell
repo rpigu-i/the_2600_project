@@ -1,0 +1,2 @@
+while read foo; do echo $foo; done < fstab.backup > fstab
+

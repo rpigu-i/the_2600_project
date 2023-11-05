@@ -1,0 +1,1 @@
+while read foo; do bar=`echo $foo | sed 's/%3D$//g'`; mv $foo $bar; done < names.txt

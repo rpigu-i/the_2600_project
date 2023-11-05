@@ -1,0 +1,5 @@
+#!/bin/bash
+MEDIA=`echo $1 | sed -e 's/ /\\ /g' -e 's/\-/\\-/g'`
+killall -9 vlc_start
+vlc_start "$MEDIA"
+

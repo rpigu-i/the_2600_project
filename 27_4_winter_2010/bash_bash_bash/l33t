@@ -1,0 +1,4 @@
+l33t {
+$* 2>/dev/stdout | sed -e 's/E/3/gi' -e 's/L/1/gi' -e 's/A/4/gi' -e 's/o/0/gi' -e 's/G/9/gi'
+}
+
