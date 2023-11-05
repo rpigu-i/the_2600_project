@@ -1,0 +1,16 @@
+require 'rubygems'
+require 'watir-webdriver'
+
+b = Watir::Browser.new :firefox
+b.goto 'digg.com'
+
+b.link(:text,'Login').click
+sleep 1 until b.text.include? 'Login to Digg'
+b.text_field(:name,'ident').set 'your username'
+b.text_field(:name,'password').set 'your password'
+b.button(:text,'Login').click
+sleep 1 # May need kajiggering
+
+b.link(:text,'Top News').click
+b.divs(:class,'story-item').first.link(:text,'digg').click
+

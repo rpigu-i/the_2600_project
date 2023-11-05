@@ -1,0 +1,15 @@
+ran=$(cat /proc/interrupts | md5sum)
+MAC=00:0$[$RANDOM%6]:${ran:0:2}:${ran:3:2}:${ran:5:2}:${ran:7:2}
+ifconfig "$DEVICE" promisc
+ifconfig "$DEVICE" hw ether $MAC
+iwconfig "$DEVICE" rate 1M
+iwlist "$DEVICE" scanning
+iwconfig "$DEVICE" mode managed ap "${APMAC[$loop_counter]}" channel "${CHANNEL[$loop_counter]}" essid "${ESSID[$loop_counter]}"
+type -P dhcpcd
+if [ $? -eq 0 ]
+then # dhcpcd with 20 s timeout (default 60)
+dhcpcd -t 20 "$DEVICE"
+else # dhclient which makes only one try to get a lease
+dhclient -1 "$DEVICE"
+fi
+

