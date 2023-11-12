@@ -80,6 +80,12 @@ The code in this repository is for educational and research purposes only. As ma
 * Autumn 2009
 * Winter 2009
 * Spring 2010
+* Summer 2010
+* Autumn 2010
+* Winter 2010
+* Spring 2011
+* Summer 2011
+* Autumn 2011
 
 ## Thanks and ShoutOuts
 
@@ -95,4 +101,4 @@ For more details:
 * Support them on Patreon at: https://patreon.com/nightridefm
 
 
-
+Shoutout to DefCon Group 561. 
