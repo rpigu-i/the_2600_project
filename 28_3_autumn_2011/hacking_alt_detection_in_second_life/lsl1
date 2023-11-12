@@ -1,0 +1,2 @@
+llSensorRepeat("", "", AGENT, 1.0, PI, 0.5);
+

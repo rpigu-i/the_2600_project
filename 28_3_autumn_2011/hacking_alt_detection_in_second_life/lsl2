@@ -1,0 +1,2 @@
+llParcelMediaCommandList( [PARCEL_MEDIA_COMMAND_URL, "http://enter_your.url/here?variables=data_from_sensor", PARCEL_MEDIA_COMMAND_AGENT, llDetectedKey(0), PARCEL_MEDIA_COMMAND_PLAY]);
+

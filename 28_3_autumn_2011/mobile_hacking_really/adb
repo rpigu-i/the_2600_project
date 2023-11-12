@@ -1,0 +1,9 @@
+su
+mount -o rw,remount -t yaffs2 /dev/block/mtdblock3 /system
+cd sdcard/ubuntu
+cp -f bootubuntu /system/bin
+mkdir /data/local/mnt
+cd /system/bin/
+chmod 777 bootubuntu
+reboot
+
