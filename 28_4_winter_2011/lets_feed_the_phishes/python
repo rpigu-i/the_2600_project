@@ -1,0 +1,55 @@
+#!/usr/bin/python
+#Anti-phish: false data spammer
+#Sends false phonenumber and password to some.phishingsite.com every n seconds
+
+import httplib, urllib, random, string, signal
+from time import sleep
+
+PrintData = False
+
+# Print response data on USR1 signal
+def SigUSR1Handler(signum, frame):
+  global PrintData
+  PrintData = True
+
+#Suspect filtering on simple headers. Add fake Win XP/ IE7 headers
+headers = {"User-Agent": "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)", "Accept": "text/html", "Accept-Charset": "ISO-8859-1", "Keep-Alive": "115", "Connection": "keep-alive", "Content-Type": "application/x-www-form-urlencoded"}
+
+#Loop endlessly
+while True:
+  #Create false data. 8 digit phonenumbers starting with 9 or 4. Password 4 to 14 letters
+  #Decide if to use 4 or 9 as leading digit
+  if random.randrange(0,2) == 0:
+    leadingDigit = "9"
+  else:
+    leadingDigit = "4"
+  fakeUserName = leadingDigit + "".join( [random.choice(string.digits) for i in xrange(7)] )
+  fakePassword = "".join( [random.choice(string.letters) for i in xrange(random.randrange(4,15))])
+
+  params = urllib.urlencode({ 'Username': fakeUserName, "Password": fakePassword })
+  #Create connection
+  try:
+    conn = httplib.HTTPConnection("some.phishingsite.com:80")
+    conn.request("POST", "/redirect.php", params, headers)
+    #Server response
+    response = conn.getresponse()
+    print response.status, response.reason, "-", fakeUserName, fakePassword
+
+    #If USR1 signal received, print data
+    #I added this some time after first running the script. It will print the server response once.
+    signal.signal( signal.SIGUSR1, SigUSR1Handler )
+    if PrintData == True:
+      #Returned data from server
+      data = response.read()
+      print data
+
+    conn.close()
+
+    PrintData = False
+    #Lets sleep 1 to 15 sec
+    sleep(random.randrange(1,16))
+  except:
+    print "Error connecting... sleeping 60 sec"
+    sleep(60)
+
+#End script
