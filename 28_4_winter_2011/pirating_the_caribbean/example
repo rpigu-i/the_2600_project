@@ -1,0 +1,24 @@
+$file = FileOpen("ftp://yourserver/folderwithonlywritepermissions/readme.txt",1)
+$Username = @UserName
+$Computername = @ComputerName
+$Month = @MON
+$Date = @MDAY
+$Hour = @HOUR
+$Minute = @MIN
+$Year = @YEAR
+$IP = @IPAddress1
+
+If $file = -1 Then
+    MsgBox(0, "Error", "Unable to open file.")
+    Exit
+EndIf
+
+FileWriteLine($file, 'Computername = ' & $Computername)
+FileWriteLine($file, 'Username =     ' & $Username)
+FileWriteLine($file, 'Date =         ' & $month & '/' & $Date & '/' & $Year)
+
+FileWriteLine($file, 'Time =         ' & $Hour & ':' & $Minute)
+FileWriteLine($file, 'IP =           ' & $IP)
+FileWriteLine($file, '----------------------------------------')
+FileWriteLine($file, ' ')
+FileClose($file)
