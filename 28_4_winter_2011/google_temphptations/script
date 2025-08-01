@@ -1,0 +1,10 @@
+# Recursively download PHP files.
+wget -r -A *php* -T 3 -t 1 http://www.example.com
+
+# Files are stored in a directory named after website domain.
+# Use find and perl to list every PHP file, append ~, then attempt to access.
+find . -iname '*.php*' |
+perl -ne 'if (m/\.\/(.*\.php)/) { print "http:\/\/$1~\n" }' |
+sort | uniq |
+wget -i - --spider --max-redirect=0 -T 3 2>&1 |
+grep -B 6 "Remote file exists"

@@ -1,0 +1,5 @@
+<?php
+  include("header.php");
+  // page content
+  include("footer.php");
+?>
