@@ -1,6 +1,6 @@
 # Volume 28, Number 4: Winter 2011-2012
 
-![2600 Magazine Winter 2011-2012](https://www.2600.com/sites/default/files/styles/large/public/wi11.gif)
+![2600 Magazine Winter 2011-2012](https://www.2600.com/sites/default/files/styles/large/public/wi111.gif)
 
 Code in this repository comes from the Winter 2011-2012 edition of #2600.
 
